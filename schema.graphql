@@ -1,0 +1,31 @@
+enum TradeType {
+    TRADE
+    LIMIT
+    STOP
+}
+
+type Trade @entity {
+    id: ID!
+    user: Bytes!
+    index: BigInt!
+    pairIndex: Int!
+    leverage: BigDecimal!
+    long: Boolean!
+    isOpen: Boolean!
+    collateralIndex: Int!
+    tradeType: TradeType!
+    collateralAmount: BigDecimal!
+    openPrice: BigDecimal!
+    tp: BigDecimal!
+    sl: BigDecimal!
+}
+
+type OrdersHistory @entity {
+    id: ID!
+    trade: Trade!
+    open: Boolean!
+    priceImpactP: BigDecimal!
+    percentProfit: BigDecimal!
+    amountSentToTrader: BigDecimal!
+    collateralPriceUsd: BigDecimal!
+}

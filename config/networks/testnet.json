@@ -1,0 +1,8 @@
+{
+    "testnet": {
+        "LeverageDiamond": {
+            "address": "0x48450c36443B7e2c3C9E1afDb482773cA949caDE",
+            "startBlock": 473493
+        }
+    }
+}

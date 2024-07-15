@@ -1,0 +1,30 @@
+{
+    "name": "subgraph-leveragex",
+    "version": "1.5.2",
+    "description": "subgraph-leveragex",
+    "scripts": {
+        "prepare": "husky install",
+        "format": "prettier --write .",
+        "codegen": "graph codegen",
+        "test": "graph test -v 0.5.4",
+        "test:ci": "npm test",
+        "constants:testnet": "npm run codegen && mustache config/constants/testnet.json config/constants/template.hbs > generated/constants.ts",
+        "constants:mainnet": "npm run codegen && mustache config/constants/mainnet.json config/constants/template.hbs > generated/constants.ts",
+        "build:testnet": "npm run constants:testnet && graph build --network-file config/networks/testnet.json --network mainnet",
+        "build:mainnet": "npm run constants:mainnet && graph build --network-file config/networks/mainnet.json --network mainnet"
+    },
+    "engines": {
+        "node": "^20.5.0",
+        "npm": ">=9.8.0"
+    },
+    "dependencies": {
+        "@graphprotocol/graph-cli": "^0.58.0",
+        "@graphprotocol/graph-ts": "^0.31.0"
+    },
+    "devDependencies": {
+        "husky": "^8.0.2",
+        "matchstick-as": "^0.5.0",
+        "mustache": "^4.2.0",
+        "prettier": "^3.0.1"
+    }
+}

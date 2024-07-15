@@ -1,0 +1,33 @@
+specVersion: 1.0.0
+description: The subgraph for leveragex
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: LeverageDiamond
+    network: testnet
+    source:
+      abi: LeverageDiamond
+      address: "0x48450c36443B7e2c3C9E1afDb482773cA949caDE"
+      startBlock: 473493
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/LeverageDiamond.ts
+      entities:
+        - OrdersHistory
+        - Trade
+      abis:
+        - name: LeverageDiamond
+          file: ./abis/LeverageDiamond.json
+      eventHandlers:
+        - event: MarketExecuted((address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256)
+          handler: handleMarketExecuted
+        - event: LimitExecuted((address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
+            address,uint8,uint256,uint256,int256,uint256,uint256,bool)
+          handler: handleLimitExecuted
+        - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
+          handler: handleOpenLimitCanceled
+      blockHandlers:
+        - handler: handleBlock
