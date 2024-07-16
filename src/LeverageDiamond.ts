@@ -1,4 +1,8 @@
-import {LimitExecuted, MarketExecuted, OpenLimitCanceled} from "../generated/LeverageDiamond/LeverageDiamond";
+import {
+    LimitExecuted,
+    MarketExecuted,
+    OpenLimitCanceled,
+} from "../generated/LeverageDiamond/LeverageDiamond";
 import { saveTrade } from "./entity/trade";
 import { saveOrderHistory } from "./entity/ordersHistory";
 import { BigDecimal } from "@graphprotocol/graph-ts";

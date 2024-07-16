@@ -3,6 +3,10 @@
         "LeverageDiamond": {
             "address": "0x48450c36443B7e2c3C9E1afDb482773cA949caDE",
             "startBlock": 473493
+        },
+        "JavBorrowingProvider": {
+            "address": "0xb2755fCAC2de208b20ec482317de0dB2A89EcaFd",
+            "startBlock": 497631
         }
     }
 }

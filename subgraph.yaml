@@ -31,3 +31,27 @@ dataSources:
           handler: handleOpenLimitCanceled
       blockHandlers:
         - handler: handleBlock
+  - kind: ethereum/contract
+    name: JavBorrowingProvider
+    network: testnet
+    source:
+      abi: JavBorrowingProvider
+      address: "0xb2755fCAC2de208b20ec482317de0dB2A89EcaFd"
+      startBlock: 497631
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/JavBorrowingProvider.ts
+      entities:
+        - OrdersHistory
+      abis:
+        - name: JavBorrowingProvider
+          file: ./abis/JavBorrowingProvider.json
+      eventHandlers:
+        - event: BuyJLP(indexed address,address,address,uint256,uint256)
+          handler: handleBuyJLP
+        - event: SellJLP(indexed address,address,address,uint256,uint256)
+          handler: handleSellJLP
+      blockHandlers:
+        - handler: handleBlock

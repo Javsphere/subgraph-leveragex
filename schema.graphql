@@ -4,6 +4,11 @@ enum TradeType {
     STOP
 }
 
+enum JLPActionType {
+    BUY
+    SELL
+}
+
 type Trade @entity {
     id: ID!
     user: Bytes!
@@ -28,4 +33,18 @@ type OrdersHistory @entity {
     percentProfit: BigDecimal!
     amountSentToTrader: BigDecimal!
     collateralPriceUsd: BigDecimal!
+}
+
+type BorrowingProviderHistory @entity {
+    id: Bytes!
+    address: Bytes!
+    tokenIn: Bytes!
+    tokenOut: Bytes!
+    amountIn: BigDecimal!
+    amountOut: BigDecimal!
+    type: JLPActionType!
+
+    block: BigInt!
+    tx: Bytes!
+    date: BigInt!
 }
