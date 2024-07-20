@@ -1,24 +1,50 @@
-type AdminChanged @entity(immutable: true) {
-  id: Bytes!
-  previousAdmin: Bytes! # address
-  newAdmin: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum TradeType {
+  TRADE
+  LIMIT
+  STOP
 }
 
-type BeaconUpgraded @entity(immutable: true) {
-  id: Bytes!
-  beacon: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum JLPActionType {
+  BUY
+  SELL
 }
 
-type Upgraded @entity(immutable: true) {
+type Trade @entity {
+  id: ID!
+  user: Bytes!
+  index: BigInt!
+  pairIndex: Int!
+  leverage: BigDecimal!
+  long: Boolean!
+  isOpen: Boolean!
+  collateralIndex: Int!
+  tradeType: TradeType!
+  collateralAmount: BigDecimal!
+  openPrice: BigDecimal!
+  tp: BigDecimal!
+  sl: BigDecimal!
+}
+
+type OrdersHistory @entity {
+  id: ID!
+  trade: Trade!
+  open: Boolean!
+  priceImpactP: BigDecimal!
+  percentProfit: BigDecimal!
+  amountSentToTrader: BigDecimal!
+  collateralPriceUsd: BigDecimal!
+}
+
+type BorrowingProviderHistory @entity {
   id: Bytes!
-  implementation: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  address: Bytes!
+  tokenIn: Bytes!
+  tokenOut: Bytes!
+  amountIn: BigDecimal!
+  amountOut: BigDecimal!
+  type: JLPActionType!
+
+  block: BigInt!
+  tx: Bytes!
+  date: BigInt!
 }

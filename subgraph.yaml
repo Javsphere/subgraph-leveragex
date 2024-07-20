@@ -8,8 +8,8 @@ dataSources:
     network: testnet
     source:
       abi: LeverageDiamond
-      address: "0x48450c36443B7e2c3C9E1afDb482773cA949caDE"
-      startBlock: 473493
+      address: "0xa7323f2860E66b763dd4aF6c9C9Ab9D452e47922"
+      startBlock: 12727500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -29,15 +29,13 @@ dataSources:
           handler: handleLimitExecuted
         - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
           handler: handleOpenLimitCanceled
-      blockHandlers:
-        - handler: handleBlock
   - kind: ethereum/contract
     name: JavBorrowingProvider
     network: testnet
     source:
       abi: JavBorrowingProvider
-      address: "0xb2755fCAC2de208b20ec482317de0dB2A89EcaFd"
-      startBlock: 497631
+      address: "0x1f369b8c801b79A3B8964c5cea19f5Af5b7725e0"
+      startBlock: 12684134
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -53,5 +51,3 @@ dataSources:
           handler: handleBuyJLP
         - event: SellJLP(indexed address,address,address,uint256,uint256)
           handler: handleSellJLP
-      blockHandlers:
-        - handler: handleBlock

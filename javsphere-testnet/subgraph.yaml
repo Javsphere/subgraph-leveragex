@@ -1,32 +1,53 @@
 specVersion: 1.0.0
-indexerHints:
-  prune: auto
+description: The subgraph for leveragex
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum
-    name: ERC1967Proxy
+  - kind: ethereum/contract
+    name: LeverageDiamond
     network: base-sepolia
     source:
+      abi: LeverageDiamond
       address: "0xa7323f2860E66b763dd4aF6c9C9Ab9D452e47922"
-      abi: ERC1967Proxy
       startBlock: 12727500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
+      file: ./src/LeverageDiamond.ts
       entities:
-        - AdminChanged
-        - BeaconUpgraded
-        - Upgraded
+        - OrdersHistory
+        - Trade
       abis:
-        - name: ERC1967Proxy
-          file: ./abis/ERC1967Proxy.json
+        - name: LeverageDiamond
+          file: ./abis/LeverageDiamond.json
       eventHandlers:
-        - event: AdminChanged(address,address)
-          handler: handleAdminChanged
-        - event: BeaconUpgraded(indexed address)
-          handler: handleBeaconUpgraded
-        - event: Upgraded(indexed address)
-          handler: handleUpgraded
-      file: ./src/erc-1967-proxy.ts
+        - event: MarketExecuted((address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256)
+          handler: handleMarketExecuted
+        - event: LimitExecuted((address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
+            address,uint8,uint256,uint256,int256,uint256,uint256,bool)
+          handler: handleLimitExecuted
+        - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
+          handler: handleOpenLimitCanceled
+  - kind: ethereum/contract
+    name: JavBorrowingProvider
+    network: base-sepolia
+    source:
+      abi: JavBorrowingProvider
+      address: "0x1f369b8c801b79A3B8964c5cea19f5Af5b7725e0"
+      startBlock: 12684134
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/JavBorrowingProvider.ts
+      entities:
+        - OrdersHistory
+      abis:
+        - name: JavBorrowingProvider
+          file: ./abis/JavBorrowingProvider.json
+      eventHandlers:
+        - event: BuyJLP(indexed address,address,address,uint256,uint256)
+          handler: handleBuyJLP
+        - event: SellJLP(indexed address,address,address,uint256,uint256)
+          handler: handleSellJLP
