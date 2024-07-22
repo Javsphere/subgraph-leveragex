@@ -23,6 +23,10 @@ type Trade @entity {
     openPrice: BigDecimal!
     tp: BigDecimal!
     sl: BigDecimal!
+
+    block: BigInt!
+    tx: Bytes!
+    date: BigInt!
 }
 
 type OrdersHistory @entity {
@@ -33,6 +37,10 @@ type OrdersHistory @entity {
     percentProfit: BigDecimal!
     amountSentToTrader: BigDecimal!
     collateralPriceUsd: BigDecimal!
+
+    block: BigInt!
+    tx: Bytes!
+    date: BigInt!
 }
 
 type BorrowingProviderHistory @entity {

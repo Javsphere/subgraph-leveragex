@@ -1,5 +1,5 @@
 {
-  "testnet": {
+  "base-sepolia": {
     "LeverageDiamond": {
       "address": "0xa7323f2860E66b763dd4aF6c9C9Ab9D452e47922",
       "startBlock": 12727500

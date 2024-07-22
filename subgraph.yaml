@@ -34,8 +34,8 @@ dataSources:
     network: testnet
     source:
       abi: JavBorrowingProvider
-      address: "0x1f369b8c801b79A3B8964c5cea19f5Af5b7725e0"
-      startBlock: 12684134
+      address: "0xA1b67fc966Ecfd9308DB501FB5F236cB295a476D"
+      startBlock: 12683198
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

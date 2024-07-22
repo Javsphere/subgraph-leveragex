@@ -21,7 +21,10 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         BigDecimal.fromString(params.t.collateralAmount.toString()),
         BigDecimal.fromString(params.t.openPrice.toString()),
         BigDecimal.fromString(params.t.tp.toString()),
-        BigDecimal.fromString(params.t.sl.toString())
+        BigDecimal.fromString(params.t.sl.toString()),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 
     saveOrderHistory(
@@ -30,7 +33,10 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         new BigDecimal(params.priceImpactP),
         new BigDecimal(params.percentProfit),
         new BigDecimal(params.amountSentToTrader),
-        new BigDecimal(params.collateralPriceUsd)
+        new BigDecimal(params.collateralPriceUsd),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 }
 
@@ -48,7 +54,10 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         BigDecimal.fromString(params.t.collateralAmount.toString()),
         BigDecimal.fromString(params.t.openPrice.toString()),
         BigDecimal.fromString(params.t.tp.toString()),
-        BigDecimal.fromString(params.t.sl.toString())
+        BigDecimal.fromString(params.t.sl.toString()),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 
     saveOrderHistory(
@@ -57,7 +66,10 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         new BigDecimal(params.priceImpactP),
         new BigDecimal(params.percentProfit),
         new BigDecimal(params.amountSentToTrader),
-        new BigDecimal(params.collateralPriceUsd)
+        new BigDecimal(params.collateralPriceUsd),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 }
 
@@ -75,7 +87,10 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         BigDecimal.fromString("0"),
         BigDecimal.fromString("0"),
         BigDecimal.fromString("0"),
-        BigDecimal.fromString("0")
+        BigDecimal.fromString("0"),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 
     saveOrderHistory(
@@ -84,6 +99,9 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         BigDecimal.fromString("0"),
         BigDecimal.fromString("0"),
         trade.collateralAmount,
-        BigDecimal.fromString("0")
+        BigDecimal.fromString("0"),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 }

@@ -1,5 +1,5 @@
 import { Trade } from "../../generated/schema";
-import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { WEI_E10_BD, WEI_E18_BD, WEI_E3_BD } from "../common";
 
 export function saveTrade(
@@ -14,9 +14,12 @@ export function saveTrade(
     collateralAmount: BigDecimal,
     openPrice: BigDecimal,
     tp: BigDecimal,
-    sl: BigDecimal
+    sl: BigDecimal,
+    block: BigInt,
+    tx: Bytes,
+    date: BigInt
 ): Trade {
-    const tradeID = `${user}-${pairIndex}-${index}`;
+    const tradeID = `${user.toHexString()}-${pairIndex}-${index}`;
     let trade = Trade.load(tradeID);
     if (!trade) {
         trade = new Trade(tradeID);
@@ -32,6 +35,9 @@ export function saveTrade(
         trade.openPrice = openPrice.div(WEI_E10_BD);
         trade.tp = tp.div(WEI_E10_BD);
         trade.sl = sl.div(WEI_E10_BD);
+        trade.block = block;
+        trade.tx = tx;
+        trade.date = date;
     }
 
     trade.isOpen = isOpen;
