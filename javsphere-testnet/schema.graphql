@@ -37,6 +37,7 @@ type OrdersHistory @entity {
   percentProfit: BigDecimal!
   amountSentToTrader: BigDecimal!
   collateralPriceUsd: BigDecimal!
+  price: BigDecimal!
 
   block: BigInt!
   tx: Bytes!

@@ -9,6 +9,7 @@ export function saveOrderHistory(
     percentProfit: BigDecimal,
     amountSentToTrader: BigDecimal,
     collateralPriceUsd: BigDecimal,
+    price: BigDecimal,
     block: BigInt,
     tx: Bytes,
     date: BigInt
@@ -18,19 +19,19 @@ export function saveOrderHistory(
     if (!orderHistory) {
         orderHistory = new OrdersHistory(orderHistoryID);
         orderHistory.trade = trade.id;
-        orderHistory.open = open;
-        orderHistory.priceImpactP = priceImpactP.div(WEI_E10_BD);
-        orderHistory.percentProfit = percentProfit.div(WEI_E10_BD);
         orderHistory.amountSentToTrader = amountSentToTrader.div(WEI_E18_BD);
         orderHistory.collateralPriceUsd = collateralPriceUsd.div(WEI_E8_BD);
-        orderHistory.block = block;
-        orderHistory.tx = tx;
-        orderHistory.date = date;
     }
 
     orderHistory.percentProfit = percentProfit.div(WEI_E10_BD);
+    orderHistory.priceImpactP = priceImpactP.div(WEI_E10_BD);
     orderHistory.amountSentToTrader = amountSentToTrader.div(WEI_E18_BD);
     orderHistory.collateralPriceUsd = collateralPriceUsd.div(WEI_E8_BD);
+    orderHistory.price = price.div(WEI_E10_BD);
+    orderHistory.open = open;
+    orderHistory.block = block;
+    orderHistory.tx = tx;
+    orderHistory.date = date;
 
     orderHistory.save();
 }
