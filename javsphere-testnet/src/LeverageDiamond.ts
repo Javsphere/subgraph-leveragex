@@ -15,7 +15,7 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         params.t.pairIndex,
         BigDecimal.fromString(params.t.leverage.toString()),
         params.t.long,
-        params.t.isOpen,
+        params.open,
         params.t.collateralIndex,
         params.t.tradeType,
         BigDecimal.fromString(params.t.collateralAmount.toString()),
@@ -37,7 +37,8 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         new BigDecimal(params.price),
         event.block.number,
         event.transaction.hash,
-        event.block.timestamp
+        event.block.timestamp,
+        event.logIndex
     );
 }
 
@@ -71,7 +72,8 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         new BigDecimal(params.price),
         event.block.number,
         event.transaction.hash,
-        event.block.timestamp
+        event.block.timestamp,
+        event.logIndex
     );
 }
 
@@ -105,6 +107,7 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         BigDecimal.fromString("0"),
         event.block.number,
         event.transaction.hash,
-        event.block.timestamp
+        event.block.timestamp,
+        event.logIndex
     );
 }
