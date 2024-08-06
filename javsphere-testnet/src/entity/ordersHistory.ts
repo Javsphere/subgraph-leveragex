@@ -13,11 +13,14 @@ export function saveOrderHistory(
     block: BigInt,
     tx: Bytes,
     date: BigInt,
-    logIndex: BigInt,
 ): void {
-    const orderHistoryID = `${trade.user.toHexString()}-${trade.index}-${tx.concatI32(logIndex.toI32()).toHexString()}`;
-    let orderHistory = new OrdersHistory(orderHistoryID);
-    orderHistory.trade = trade.id;
+    const orderHistoryID = `${trade.user.toHexString()}-${trade.index}`;
+    let orderHistory = OrdersHistory.load(orderHistoryID);
+    if (!orderHistory) {
+        orderHistory = new OrdersHistory(orderHistoryID);
+        orderHistory.trade = trade.id;
+    }
+
     orderHistory.percentProfit = percentProfit.div(WEI_E10_BD);
     orderHistory.priceImpactP = priceImpactP.div(WEI_E10_BD);
     orderHistory.amountSentToTrader = amountSentToTrader.div(WEI_E18_BD);
