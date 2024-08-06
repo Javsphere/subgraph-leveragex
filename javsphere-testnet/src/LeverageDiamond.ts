@@ -38,7 +38,6 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         event.block.number,
         event.transaction.hash,
         event.block.timestamp,
-        event.logIndex
     );
 }
 
@@ -73,7 +72,6 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         event.block.number,
         event.transaction.hash,
         event.block.timestamp,
-        event.logIndex
     );
 }
 
@@ -108,6 +106,5 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         event.block.number,
         event.transaction.hash,
         event.block.timestamp,
-        event.logIndex
     );
 }
