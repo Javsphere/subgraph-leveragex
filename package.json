@@ -8,10 +8,10 @@
         "codegen": "graph codegen",
         "test": "graph test -v 0.5.4",
         "test:ci": "npm test",
-        "constants:testnet": "npm run codegen && mustache config/constants/testnet.json config/constants/template.hbs > generated/constants.ts",
-        "constants:mainnet": "npm run codegen && mustache config/constants/mainnet.json config/constants/template.hbs > generated/constants.ts",
-        "build:testnet": "npm run constants:testnet && graph build --network-file config/networks/testnet.json --network mainnet",
-        "build:mainnet": "npm run constants:mainnet && graph build --network-file config/networks/mainnet.json --network mainnet"
+        "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ javsphere-testnet",
+        "create-local": "graph create --node http://localhost:8020/ javsphere-testnet",
+        "remove-local": "graph remove --node http://localhost:8020/ javsphere-testnet",
+        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 javsphere-testnet"
     },
     "engines": {
         "node": "^20.5.0",

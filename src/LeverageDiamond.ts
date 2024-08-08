@@ -5,7 +5,8 @@ import {
 } from "../generated/LeverageDiamond/LeverageDiamond";
 import { saveTrade } from "./entity/trade";
 import { saveOrderHistory } from "./entity/ordersHistory";
-import { BigDecimal } from "@graphprotocol/graph-ts";
+import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
+import { savePairsStatistic } from "./entity/pairsStatistics";
 
 export function handleMarketExecuted(event: MarketExecuted): void {
     const params = event.params;
@@ -37,6 +38,12 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
+    );
+    savePairsStatistic(
+        BigInt.fromI32(params.t.collateralIndex),
+        BigInt.fromI32(params.t.pairIndex),
+        params.t.long,
+        params.open
     );
 }
 
@@ -71,6 +78,12 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         event.transaction.hash,
         event.block.timestamp
     );
+    savePairsStatistic(
+        BigInt.fromI32(params.t.collateralIndex),
+        BigInt.fromI32(params.t.pairIndex),
+        params.t.long,
+        params.exactExecution
+    );
 }
 
 export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
@@ -103,5 +116,12 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
+    );
+
+    savePairsStatistic(
+        BigInt.fromI32(trade.collateralIndex),
+        BigInt.fromI32(trade.pairIndex),
+        trade.long,
+        false
     );
 }
