@@ -5,7 +5,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: LeverageDiamond
-    network: testnet
+    network: base-sepolia
     source:
       abi: LeverageDiamond
       address: "0xa7323f2860E66b763dd4aF6c9C9Ab9D452e47922"
@@ -18,6 +18,7 @@ dataSources:
       entities:
         - OrdersHistory
         - Trade
+        - PairsStatistic
       abis:
         - name: LeverageDiamond
           file: ./abis/LeverageDiamond.json
@@ -31,11 +32,11 @@ dataSources:
           handler: handleOpenLimitCanceled
   - kind: ethereum/contract
     name: JavBorrowingProvider
-    network: testnet
+    network: base-sepolia
     source:
       abi: JavBorrowingProvider
-      address: "0xA1b67fc966Ecfd9308DB501FB5F236cB295a476D"
-      startBlock: 12683198
+      address: "0x1f369b8c801b79A3B8964c5cea19f5Af5b7725e0"
+      startBlock: 12684134
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

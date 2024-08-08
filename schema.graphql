@@ -56,3 +56,10 @@ type BorrowingProviderHistory @entity {
     tx: Bytes!
     date: BigInt!
 }
+
+type PairsStatistic @entity {
+    id: ID!
+    longPositionsCount: BigInt!
+    shortPositionsCount: BigInt!
+    totalPositionsCount: BigInt!
+}
