@@ -35,6 +35,7 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         new BigDecimal(params.percentProfit),
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
+        new BigDecimal(params.price),
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
@@ -74,6 +75,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         new BigDecimal(params.percentProfit),
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
+        new BigDecimal(params.price),
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
@@ -113,9 +115,10 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         BigDecimal.fromString("0"),
         trade.collateralAmount,
         BigDecimal.fromString("0"),
+        BigDecimal.fromString("0"),
         event.block.number,
         event.transaction.hash,
-        event.block.timestamp,
+        event.block.timestamp
     );
 
     savePairsStatistic(

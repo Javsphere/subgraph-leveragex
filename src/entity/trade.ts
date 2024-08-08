@@ -26,21 +26,22 @@ export function saveTrade(
         trade.user = user;
         trade.index = index;
         trade.pairIndex = pairIndex;
-        trade.leverage = leverage.div(WEI_E3_BD);
         trade.long = long;
-        trade.isOpen = isOpen;
         trade.collateralIndex = collateralIndex;
         trade.tradeType = getTradeTypeByKey(tradeType);
-        trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
         trade.openPrice = openPrice.div(WEI_E10_BD);
-        trade.tp = tp.div(WEI_E10_BD);
-        trade.sl = sl.div(WEI_E10_BD);
+
         trade.block = block;
         trade.tx = tx;
         trade.date = date;
     }
 
+    trade.leverage = leverage.div(WEI_E3_BD);
+    trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
+    trade.leverage = leverage.div(WEI_E3_BD);
     trade.isOpen = isOpen;
+    trade.tp = tp.div(WEI_E10_BD);
+    trade.sl = sl.div(WEI_E10_BD);
 
     trade.save();
 
