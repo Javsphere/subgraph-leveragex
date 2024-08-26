@@ -1,12 +1,12 @@
 {
     "base-sepolia": {
         "LeverageDiamond": {
-            "address": "0xa7323f2860E66b763dd4aF6c9C9Ab9D452e47922",
-            "startBlock": 12727500
+            "address": "0x1c31729b02D9151a61BB1f92f3dae90d99F24257",
+            "startBlock": 14283871
         },
         "JavBorrowingProvider": {
-            "address": "0x1f369b8c801b79A3B8964c5cea19f5Af5b7725e0",
-            "startBlock": 12684134
+            "address": "0x5EeCca8207cfe5fCe52F4Fb9716FB7748D6228f4",
+            "startBlock": 14323361
         }
     }
 }

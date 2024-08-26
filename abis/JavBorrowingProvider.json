@@ -287,7 +287,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "BuyJLP",
+        "name": "BuyLLP",
         "type": "event"
     },
     {
@@ -420,7 +420,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "SellJLP",
+        "name": "SellLLP",
         "type": "event"
     },
     {
@@ -600,7 +600,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "buyJLP",
+        "name": "buyLLP",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -655,7 +655,7 @@
             },
             {
                 "internalType": "address",
-                "name": "_jlpToken",
+                "name": "_llpToken",
                 "type": "address"
             },
             {
@@ -708,7 +708,7 @@
     },
     {
         "inputs": [],
-        "name": "jlpPrice",
+        "name": "llpPrice",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -721,7 +721,7 @@
     },
     {
         "inputs": [],
-        "name": "jlpToken",
+        "name": "llpToken",
         "outputs": [
             {
                 "internalType": "address",
@@ -912,7 +912,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "sellJLP",
+        "name": "sellLLP",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
