@@ -30,6 +30,20 @@ dataSources:
           handler: handleLimitExecuted
         - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
           handler: handleOpenLimitCanceled
+        - event: TradePositionUpdated((address,uint32),uint120,uint24,uint64,uint64,uint64)
+          handler: handleTradePositionUpdated
+        - event: LeverageUpdateExecuted((address,uint32),bool,indexed uint8,indexed
+            address,indexed
+            uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256))
+          handler: handleLeverageUpdateExecuted
+        - event: PositionSizeIncreaseExecuted((address,uint32),indexed uint8,indexed
+            address,indexed
+            uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))
+          handler: handlePositionSizeIncreaseExecuted
+        - event: PositionSizeDecreaseExecuted((address,uint32),indexed uint8,indexed
+            address,indexed
+            uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,int256,uint256,uint256,uint256,int256,int256,uint120,uint24))
+          handler: handlePositionSizeDecreaseExecuted
   - kind: ethereum/contract
     name: JavBorrowingProvider
     network: base-sepolia

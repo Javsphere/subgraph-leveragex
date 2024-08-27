@@ -48,6 +48,26 @@ export function saveTrade(
     return trade;
 }
 
+export function updateTrade(
+    user: Address,
+    index: BigInt,
+    pairIndex: BigInt,
+    leverage: BigDecimal,
+    collateralAmount: BigDecimal,
+    openPrice: BigDecimal | null
+): void {
+    const tradeID = `${user.toHexString()}-${pairIndex}-${index}`;
+    let trade = Trade.load(tradeID);
+    if (!trade) {
+        return;
+    }
+    trade.leverage = leverage.div(WEI_E3_BD);
+    trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
+    if (openPrice) {
+        trade.openPrice = openPrice.div(WEI_E10_BD);
+    }
+}
+
 function getTradeTypeByKey(key: i32): string {
     switch (key) {
         case 0:

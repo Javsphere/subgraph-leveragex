@@ -1,9 +1,13 @@
 import {
+    LeverageUpdateExecuted,
     LimitExecuted,
     MarketExecuted,
     OpenLimitCanceled,
+    PositionSizeDecreaseExecuted,
+    PositionSizeIncreaseExecuted,
+    TradePositionUpdated,
 } from "../generated/LeverageDiamond/LeverageDiamond";
-import { saveTrade } from "./entity/trade";
+import { saveTrade, updateTrade } from "./entity/trade";
 import { saveOrderHistory } from "./entity/ordersHistory";
 import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 import { savePairsStatistic } from "./entity/pairsStatistics";
@@ -126,5 +130,43 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
         BigInt.fromI32(trade.pairIndex),
         trade.long,
         false
+    );
+}
+
+export function handleTradePositionUpdated(event: TradePositionUpdated): void {}
+
+export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): void {
+    const params = event.params;
+    updateTrade(
+        params.trader,
+        params.index,
+        params.pairIndex,
+        new BigDecimal(params.values.newLeverage),
+        new BigDecimal(params.values.newCollateralAmount),
+        null
+    );
+}
+
+export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseExecuted): void {
+    const params = event.params;
+    updateTrade(
+        params.trader,
+        params.index,
+        params.pairIndex,
+        new BigDecimal(params.values.newLeverage),
+        new BigDecimal(params.values.newCollateralAmount),
+        new BigDecimal(params.values.newOpenPrice)
+    );
+}
+
+export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseExecuted): void {
+    const params = event.params;
+    updateTrade(
+        params.trader,
+        params.index,
+        params.pairIndex,
+        BigDecimal.fromString(params.values.newLeverage.toString()),
+        new BigDecimal(params.values.newCollateralAmount),
+        null
     );
 }

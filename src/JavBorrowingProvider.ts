@@ -1,6 +1,6 @@
 import { BigDecimal } from "@graphprotocol/graph-ts";
 import { saveBorrowingProviderHistory } from "./entity/borrowingProviderHistory";
-import {BuyLLP, SellLLP} from "../generated/JavBorrowingProvider/JavBorrowingProvider";
+import { BuyLLP, SellLLP } from "../generated/JavBorrowingProvider/JavBorrowingProvider";
 
 export function handleBuyLLP(event: BuyLLP): void {
     const params = event.params;
