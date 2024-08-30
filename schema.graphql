@@ -9,6 +9,22 @@ enum JLPActionType {
     SELL
 }
 
+enum OrderType {
+    MARKET_OPEN
+    MARKET_CLOSE
+    LIMIT_OPEN
+    STOP_OPEN
+    TP_CLOSE
+    SL_CLOSE
+    LIQ_CLOSE
+    UPDATE_LEVERAGE
+    MARKET_PARTIAL_OPEN
+    MARKET_PARTIAL_CLOSE
+    USER_OPEN
+    USER_CANCEL
+    USER_CLOSE
+}
+
 type Trade @entity {
     id: ID!
     user: Bytes!
@@ -38,6 +54,7 @@ type OrdersHistory @entity {
     amountSentToTrader: BigDecimal!
     collateralPriceUsd: BigDecimal!
     price: BigDecimal!
+    orderType: OrderType!
 
     block: BigInt!
     tx: Bytes!
