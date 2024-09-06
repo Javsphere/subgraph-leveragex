@@ -8,8 +8,8 @@ dataSources:
     network: base-sepolia
     source:
       abi: LeverageDiamond
-      address: "0x1c31729b02D9151a61BB1f92f3dae90d99F24257"
-      startBlock: 14283871
+      address: "0xB8057B1605e25c1D8CDE6F9f875d7bcFe4A0fE33"
+      startBlock: 14921553
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -23,15 +23,14 @@ dataSources:
         - name: LeverageDiamond
           file: ./abis/LeverageDiamond.json
       eventHandlers:
-        - event: MarketExecuted((address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256)
+        - event: MarketExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256)
           handler: handleMarketExecuted
-        - event:
-            LimitExecuted((address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
+        - event: LimitExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
             address,uint8,uint256,uint256,int256,uint256,uint256,bool)
           handler: handleLimitExecuted
         - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
           handler: handleOpenLimitCanceled
-        - event: TradePositionUpdated((address,uint32),uint120,uint24,uint64,uint64,uint64)
+        - event: TradePositionUpdated((address,uint32),uint120,uint24,uint64,uint64,uint64,bool)
           handler: handleTradePositionUpdated
         - event: LeverageUpdateExecuted((address,uint32),bool,indexed uint8,indexed
             address,indexed
@@ -50,8 +49,8 @@ dataSources:
     network: base-sepolia
     source:
       abi: JavBorrowingProvider
-      address: "0x5EeCca8207cfe5fCe52F4Fb9716FB7748D6228f4"
-      startBlock: 14323361
+      address: "0x35b2816ee92E9D7e82396Bf8Ea0A3034BE71116C"
+      startBlock: 14921610
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
