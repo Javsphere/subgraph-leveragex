@@ -6,6 +6,8 @@ import {
     PositionSizeDecreaseExecuted,
     PositionSizeIncreaseExecuted,
     TradePositionUpdated,
+    TradeSlUpdated,
+    TradeTpUpdated,
 } from "../generated/LeverageDiamond/LeverageDiamond";
 import { saveTrade, updateTrade } from "./entity/trade";
 import { saveOrderHistory } from "./entity/ordersHistory";
@@ -143,9 +145,10 @@ export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): voi
     updateTrade(
         params.trader,
         params.index,
-        params.pairIndex,
         new BigDecimal(params.values.newLeverage),
         new BigDecimal(params.values.newCollateralAmount),
+        null,
+        null,
         null
     );
 }
@@ -155,10 +158,11 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
     updateTrade(
         params.trader,
         params.index,
-        params.pairIndex,
         new BigDecimal(params.values.newLeverage),
         new BigDecimal(params.values.newCollateralAmount),
-        new BigDecimal(params.values.newOpenPrice)
+        new BigDecimal(params.values.newOpenPrice),
+        null,
+        null
     );
 }
 
@@ -167,9 +171,35 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
     updateTrade(
         params.trader,
         params.index,
-        params.pairIndex,
         BigDecimal.fromString(params.values.newLeverage.toString()),
         new BigDecimal(params.values.newCollateralAmount),
+        null,
+        null,
+        null
+    );
+}
+
+export function handleTradeSlUpdated(event: TradeSlUpdated): void {
+    const params = event.params;
+    updateTrade(
+        params.tradeId.user,
+        params.tradeId.index,
+        null,
+        null,
+        null,
+        null,
+        BigDecimal.fromString(params.newSl.toString())
+    );
+}
+export function handleTradeTpUpdated(event: TradeTpUpdated): void {
+    const params = event.params;
+    updateTrade(
+        params.tradeId.user,
+        params.tradeId.index,
+        null,
+        null,
+        null,
+        BigDecimal.fromString(params.newTp.toString()),
         null
     );
 }

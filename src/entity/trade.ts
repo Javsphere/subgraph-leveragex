@@ -19,7 +19,7 @@ export function saveTrade(
     tx: Bytes,
     date: BigInt
 ): Trade {
-    const tradeID = `${user.toHexString()}-${pairIndex}-${index}`;
+    const tradeID = `${user.toHexString()}-${index}`;
     let trade = Trade.load(tradeID);
     if (!trade) {
         trade = new Trade(tradeID);
@@ -51,21 +51,33 @@ export function saveTrade(
 export function updateTrade(
     user: Address,
     index: BigInt,
-    pairIndex: BigInt,
-    leverage: BigDecimal,
-    collateralAmount: BigDecimal,
-    openPrice: BigDecimal | null
+    leverage: BigDecimal | null,
+    collateralAmount: BigDecimal | null,
+    openPrice: BigDecimal | null,
+    tp: BigDecimal | null,
+    sl: BigDecimal | null
 ): void {
-    const tradeID = `${user.toHexString()}-${pairIndex}-${index}`;
+    const tradeID = `${user.toHexString()}-${index}`;
     let trade = Trade.load(tradeID);
     if (!trade) {
         return;
     }
-    trade.leverage = leverage.div(WEI_E3_BD);
-    trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
+    if (leverage) {
+        trade.leverage = leverage.div(WEI_E3_BD);
+    }
+    if (collateralAmount) {
+        trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
+    }
     if (openPrice) {
         trade.openPrice = openPrice.div(WEI_E10_BD);
     }
+    if (tp) {
+        trade.tp = tp.div(WEI_E10_BD);
+    }
+    if (sl) {
+        trade.sl = sl.div(WEI_E10_BD);
+    }
+    trade.save();
 }
 
 function getTradeTypeByKey(key: i32): string {
