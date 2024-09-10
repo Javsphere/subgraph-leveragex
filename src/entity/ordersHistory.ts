@@ -1,12 +1,11 @@
 import { OrdersHistory, Trade } from "../../generated/schema";
-import { BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import {BigDecimal, BigInt, Bytes, log} from "@graphprotocol/graph-ts";
 import { WEI_E10_BD, WEI_E18_BD, WEI_E8_BD } from "../common";
 
 export function saveOrderHistory(
     trade: Trade,
     open: boolean,
     priceImpactP: BigDecimal,
-    percentProfit: BigDecimal,
     amountSentToTrader: BigDecimal,
     collateralPriceUsd: BigDecimal,
     price: BigDecimal,
@@ -21,10 +20,15 @@ export function saveOrderHistory(
         orderHistory = new OrdersHistory(orderHistoryID);
         orderHistory.trade = trade.id;
     }
-
-    orderHistory.percentProfit = percentProfit.div(WEI_E10_BD);
+    amountSentToTrader = amountSentToTrader.div(WEI_E18_BD)
+    const pnl = amountSentToTrader.minus(trade.collateralAmount);
+    const pnlPercentage = pnl
+        .div(trade.collateralAmount)
+        .times(BigDecimal.fromString("100"));
+    orderHistory.pnl = pnl;
+    orderHistory.pnlPercentage = pnlPercentage;
     orderHistory.priceImpactP = priceImpactP.div(WEI_E10_BD);
-    orderHistory.amountSentToTrader = amountSentToTrader.div(WEI_E18_BD);
+    orderHistory.amountSentToTrader = amountSentToTrader;
     orderHistory.collateralPriceUsd = collateralPriceUsd.div(WEI_E8_BD);
     orderHistory.price = price.div(WEI_E10_BD);
     orderHistory.orderType = getOrderTypeByKey(orderType);

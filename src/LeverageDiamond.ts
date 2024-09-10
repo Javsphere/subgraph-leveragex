@@ -38,7 +38,6 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         trade,
         params.open,
         new BigDecimal(params.priceImpactP),
-        new BigDecimal(params.percentProfit),
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.price),
@@ -79,7 +78,6 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         trade,
         params.exactExecution,
         new BigDecimal(params.priceImpactP),
-        new BigDecimal(params.percentProfit),
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.price),
@@ -119,7 +117,6 @@ export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
     saveOrderHistory(
         trade,
         false,
-        BigDecimal.fromString("0"),
         BigDecimal.fromString("0"),
         trade.collateralAmount,
         BigDecimal.fromString("0"),

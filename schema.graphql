@@ -50,7 +50,8 @@ type OrdersHistory @entity {
     trade: Trade!
     open: Boolean!
     priceImpactP: BigDecimal!
-    percentProfit: BigDecimal!
+    pnl: BigDecimal!
+    pnlPercentage: BigDecimal!
     amountSentToTrader: BigDecimal!
     collateralPriceUsd: BigDecimal!
     price: BigDecimal!
