@@ -25,6 +25,11 @@ enum OrderType {
     USER_CLOSE
 }
 
+enum EpochType {
+    day
+    week
+}
+
 type Trade @entity {
     id: ID!
     user: Bytes!
@@ -81,4 +86,83 @@ type PairsStatistic @entity {
     longPositionsCount: BigInt!
     shortPositionsCount: BigInt!
     totalPositionsCount: BigInt!
+}
+
+type EpochTradingStatsRecord @entity {
+    id: ID!
+
+    "Address"
+    address: String!
+
+    "Date"
+    date: String!
+
+    "Epoch Type"
+    epochType: EpochType!
+
+    "CollateralID"
+    collateralID: Int!
+
+    "Total Volume"
+    totalVolumePerGroup: [BigDecimal!]!
+
+    "Total borrowing fees"
+    totalBorrowingFees: BigDecimal!
+
+    "Pairs Traded"
+    pairsTraded: [Int!]!
+
+    "Total PnL"
+    totalPnl: BigDecimal!
+
+    "Total PnL Percentage"
+    totalPnlPercentage: BigDecimal!
+
+    "Total gov fees"
+    totalGovFees: BigDecimal!
+
+    "Total referral fees"
+    totalReferralFees: BigDecimal!
+
+    "Total staker fees"
+    totalStakerFees: BigDecimal!
+
+    "Total lp fees"
+    totalLpFees: BigDecimal!
+
+    "Total opened trades"
+    totalOpenedTrades: Int
+
+    "Total closed trades"
+    totalClosedTrades: Int
+
+    "Total days a trade was closed"
+    totalDaysClosedTrades: Int
+
+    "Total days a trade was opened"
+    totalDaysOpenedTrades: Int
+}
+
+type EpochTradingPointsRecord @entity {
+    id: ID!
+    address: String!
+    date: String!
+    epochType: EpochType!
+    collateralID: Int!
+    totalFeesPaid: BigDecimal!
+    pnl: BigDecimal!
+    pnlPercentage: BigDecimal!
+    groupsTraded: [BigDecimal!]!
+    loyaltyPoints: BigDecimal!
+    feePoints: BigDecimal!
+    absSkillPoints: BigDecimal!
+    relSkillPoints: BigDecimal!
+    diversityPoints: BigDecimal!
+    isAbsSkillEligible: Boolean
+    isRelSkillEligible: Boolean
+}
+
+type LlpRewardsStat @entity {
+    id: ID!
+    usdAmount: BigDecimal!
 }

@@ -1,11 +1,115 @@
-import { Bytes, crypto, BigInt, Address, BigDecimal, ethereum } from "@graphprotocol/graph-ts";
+import { BigInt, BigDecimal, Address } from "@graphprotocol/graph-ts";
+import { LeverageDiamond } from "../generated/LeverageDiamond/LeverageDiamond";
+import { constants } from "../generated/constants";
 
 export const ZERO_BI = BigInt.zero();
-const ONE_BI = BigInt.fromI32(1);
+export const ZERO_BD = BigDecimal.fromString("0");
+export const ONE_BI = BigInt.fromI32(1);
+export const ONE_BD = BigDecimal.fromString("1");
+const SECONDS_IN_DAY = BigInt.fromI32(86400);
 
 export const PAIRS_STATISTIC_ENTITY_TYPE = "PairsStatistic";
 
+export const WEI_E2_BD = BigDecimal.fromString("1e2");
 export const WEI_E3_BD = BigDecimal.fromString("1e3");
 export const WEI_E8_BD = BigDecimal.fromString("1e8");
 export const WEI_E10_BD = BigDecimal.fromString("1e10");
 export const WEI_E18_BD = BigDecimal.fromString("1e18");
+
+//DIVERSITY POINTS THRESHOLDS BY GROUP
+export const THRESHOLD_GROUP_0 = BigDecimal.fromString("100");
+export const THRESHOLD_GROUP_1 = BigDecimal.fromString("250");
+export const THRESHOLD_GROUP_2 = BigDecimal.fromString("300");
+export const THRESHOLD_GROUP_3 = BigDecimal.fromString("500");
+export const VOLUME_THRESHOLDS = [
+    THRESHOLD_GROUP_0,
+    THRESHOLD_GROUP_1,
+    THRESHOLD_GROUP_2,
+    THRESHOLD_GROUP_3,
+];
+
+export const PROTOCOL = "protocol";
+
+class EpochTypes {
+    DAY!: string;
+    WEEK!: string;
+}
+export const EPOCH_TYPE: EpochTypes = {
+    DAY: "day",
+    WEEK: "week",
+};
+
+function toBigInt(integer: i32): BigInt {
+    return BigInt.fromI32(integer);
+}
+
+class DayWeekMonthYear {
+    day: string;
+    week: string;
+    month: string;
+    year: string;
+
+    constructor(day: BigInt, week: BigInt, month: BigInt, year: BigInt) {
+        this.day = day.toString().padStart(2, "0");
+        this.week = week.toString().padStart(2, "0");
+        this.month = month.toString().padStart(2, "0");
+        this.year = year.toString();
+    }
+}
+
+export function dayWeekMonthYearFromTimestamp(timestamp: BigInt): DayWeekMonthYear {
+    let daysSinceEpochStart = timestamp.div(SECONDS_IN_DAY);
+    daysSinceEpochStart = daysSinceEpochStart.plus(toBigInt(719468));
+
+    let era: BigInt = (
+        daysSinceEpochStart >= ZERO_BI
+            ? daysSinceEpochStart
+            : daysSinceEpochStart.minus(toBigInt(146096))
+    ).div(toBigInt(146097));
+
+    let dayOfEra: BigInt = daysSinceEpochStart.minus(era.times(toBigInt(146097))); // [0, 146096]
+
+    let yearOfEra: BigInt = dayOfEra
+        .minus(dayOfEra.div(toBigInt(1460)))
+        .plus(dayOfEra.div(toBigInt(36524)))
+        .minus(dayOfEra.div(toBigInt(146096)))
+        .div(toBigInt(365)); // [0, 399]
+
+    let year: BigInt = yearOfEra.plus(era.times(toBigInt(400)));
+
+    let dayOfYear: BigInt = dayOfEra.minus(
+        toBigInt(365)
+            .times(yearOfEra)
+            .plus(yearOfEra.div(toBigInt(4)))
+            .minus(yearOfEra.div(toBigInt(100)))
+    ); // [0, 365]
+
+    let monthZeroIndexed = toBigInt(5).times(dayOfYear).plus(toBigInt(2)).div(toBigInt(153)); // [0, 11]
+
+    let day = dayOfYear
+        .minus(
+            toBigInt(153)
+                .times(monthZeroIndexed)
+                .plus(toBigInt(2))
+                .div(toBigInt(5))
+                .plus(toBigInt(1))
+        )
+        .plus(toBigInt(2)); // [1, 31]
+
+    let week = dayOfYear.div(toBigInt(7)).plus(ONE_BI);
+
+    let month = monthZeroIndexed.plus(monthZeroIndexed < toBigInt(10) ? toBigInt(3) : toBigInt(-9)); // [1, 12]
+
+    year = month <= toBigInt(2) ? year.plus(ONE_BI) : year;
+
+    return new DayWeekMonthYear(day, week, month, year);
+}
+
+export function getDiamondContract(): LeverageDiamond {
+    return LeverageDiamond.bind(Address.fromString(constants.leverageDiamondAddress));
+}
+
+export function getGroupIndex(pairIndex: BigInt): BigInt {
+    const pairsStorageContract = getDiamondContract();
+    return pairsStorageContract.pairs(pairIndex).groupIndex;
+}

@@ -42,3 +42,4 @@ typings/
 
 # MacOS specific files
 .DS_Store
+/data

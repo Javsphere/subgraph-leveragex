@@ -19,6 +19,8 @@ dataSources:
         - OrdersHistory
         - Trade
         - PairsStatistic
+        - EpochTradingStatsRecord
+        - EpochTradingPointsRecord
       abis:
         - name: LeverageDiamond
           file: ./abis/LeverageDiamond.json
@@ -48,6 +50,16 @@ dataSources:
           handler: handleTradeSlUpdated
         - event: TradeTpUpdated((address,uint32),uint64)
           handler: handleTradeTpUpdated
+        - event: GovFeeCharged(indexed address,indexed uint8,uint256)
+          handler: handleGovFeeCharged
+        - event: ReferralFeeCharged(indexed address,indexed uint8,uint256)
+          handler: handleReferralFeeCharged
+        - event: RewardsFeeCharged(indexed address,indexed uint8,uint256)
+          handler: handleRewardsFeeCharged
+        - event: BorrowingProviderFeeCharged(indexed address,indexed uint8,uint256)
+          handler: handleBorrowingProviderFeeCharged
+        - event: BorrowingFeeCharged(indexed address,indexed uint8,uint256)
+          handler: handleBorrowingFeeCharged
   - kind: ethereum/contract
     name: JavBorrowingProvider
     network: base-sepolia
@@ -61,7 +73,7 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/JavBorrowingProvider.ts
       entities:
-        - OrdersHistory
+        - BorrowingProviderHistory
       abis:
         - name: JavBorrowingProvider
           file: ./abis/JavBorrowingProvider.json
@@ -70,3 +82,5 @@ dataSources:
           handler: handleBuyLLP
         - event: SellLLP(indexed address,address,address,uint256,uint256)
           handler: handleSellLLP
+        - event: RewardDistributed(indexed address,indexed uint256,uint256,uint256)
+          handler: handleRewardDistributed

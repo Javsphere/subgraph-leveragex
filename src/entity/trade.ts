@@ -38,7 +38,6 @@ export function saveTrade(
 
     trade.leverage = leverage.div(WEI_E3_BD);
     trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
-    trade.leverage = leverage.div(WEI_E3_BD);
     trade.isOpen = isOpen;
     trade.tp = tp.div(WEI_E10_BD);
     trade.sl = sl.div(WEI_E10_BD);

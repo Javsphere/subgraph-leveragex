@@ -1,6 +1,6 @@
 import { OrdersHistory, Trade } from "../../generated/schema";
-import {BigDecimal, BigInt, Bytes, log} from "@graphprotocol/graph-ts";
-import { WEI_E10_BD, WEI_E18_BD, WEI_E8_BD } from "../common";
+import { BigDecimal, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
+import { WEI_E10_BD, WEI_E18_BD, WEI_E2_BD, WEI_E8_BD } from "../common";
 
 export function saveOrderHistory(
     trade: Trade,
@@ -20,11 +20,9 @@ export function saveOrderHistory(
         orderHistory = new OrdersHistory(orderHistoryID);
         orderHistory.trade = trade.id;
     }
-    amountSentToTrader = amountSentToTrader.div(WEI_E18_BD)
+    amountSentToTrader = amountSentToTrader.div(WEI_E18_BD);
     const pnl = amountSentToTrader.minus(trade.collateralAmount);
-    const pnlPercentage = pnl
-        .div(trade.collateralAmount)
-        .times(BigDecimal.fromString("100"));
+    const pnlPercentage = pnl.div(trade.collateralAmount).times(WEI_E2_BD);
     orderHistory.pnl = pnl;
     orderHistory.pnlPercentage = pnlPercentage;
     orderHistory.priceImpactP = priceImpactP.div(WEI_E10_BD);
