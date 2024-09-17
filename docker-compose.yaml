@@ -19,7 +19,7 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: "ipfs:5001"
-      ethereum: "base-sepolia:https://rpc.ankr.com/base_sepolia/c53c8597fd8f8a90e1d1e25a567dd85b9b36bee4914ef878ec85997e1dd3dc7e"
+      ethereum: ${ETHEREUM_URL}
       GRAPH_LOG: info
   ipfs:
     image: ipfs/kubo:v0.17.0
