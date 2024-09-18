@@ -109,13 +109,15 @@ export function handleLimitExecuted(event: LimitExecuted): void {
     const orderType = params.orderType;
     const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
 
+    const isOpen = params.percentProfit == new BigInt(0);
+
     const trade = saveTrade(
         params.t.user,
         params.t.index,
         params.t.pairIndex,
         BigDecimal.fromString(params.t.leverage.toString()),
         params.t.long,
-        params.exactExecution,
+        isOpen,
         params.t.collateralIndex,
         params.t.tradeType,
         BigDecimal.fromString(params.t.collateralAmount.toString()),
@@ -129,7 +131,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
 
     saveOrderHistory(
         trade,
-        params.exactExecution,
+        isOpen,
         new BigDecimal(params.priceImpactP),
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
@@ -143,7 +145,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         BigInt.fromI32(params.t.collateralIndex),
         BigInt.fromI32(params.t.pairIndex),
         params.t.long,
-        params.exactExecution
+        isOpen
     );
 
     if (orderType == 0 || orderType == 2 || orderType == 3) {
