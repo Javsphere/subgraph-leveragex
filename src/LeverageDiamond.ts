@@ -109,7 +109,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
     const orderType = params.orderType;
     const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
 
-    const isOpen = params.percentProfit == new BigInt(0);
+    const isOpen = params.percentProfit == new BigInt(0) && params.orderType != 6;
 
     const trade = saveTrade(
         params.t.user,
