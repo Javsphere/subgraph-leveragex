@@ -29,6 +29,8 @@ export function addOpenTradeStats(data: addOpenTradeStatsInput): void {
     const date = dayWeekMonthYearFromTimestamp(timestamp);
     const dayID = `${date.year}-${date.month}-${date.day}`;
     const weekID = `${date.year}-${date.week}`;
+    const monthID = `${date.year}-${date.month}`;
+    const yearID = `${date.year}`;
 
     // Daily stats
     const dailyStats = createOrLoadEpochTradingStatsRecord(
@@ -49,7 +51,27 @@ export function addOpenTradeStats(data: addOpenTradeStatsInput): void {
         collateralID,
         false
     );
-    _addOpenTradeStats(data, weeklyStats, dailyStats.totalOpenedTrades == 1);
+    _addOpenTradeStats(data, weeklyStats, weeklyStats.totalOpenedTrades == 1);
+
+    // Monthly stats
+    const monthlyStats = createOrLoadEpochTradingStatsRecord(
+        address,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    _addOpenTradeStats(data, monthlyStats, monthlyStats.totalOpenedTrades == 1);
+
+    // Yearly stats
+    const yearlyStats = createOrLoadEpochTradingStatsRecord(
+        address,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    _addOpenTradeStats(data, yearlyStats, yearlyStats.totalOpenedTrades == 1);
 
     // Daily protocol stats
     const dailyProtocolStats = createOrLoadEpochTradingStatsRecord(
@@ -69,7 +91,27 @@ export function addOpenTradeStats(data: addOpenTradeStatsInput): void {
         collateralID,
         false
     );
-    _addOpenTradeStats(data, weeklyProtocolStats, dailyProtocolStats.totalOpenedTrades == 1);
+    _addOpenTradeStats(data, weeklyProtocolStats, weeklyProtocolStats.totalOpenedTrades == 1);
+
+    // Monthly stats
+    const monthlyProtocolStats = createOrLoadEpochTradingStatsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    _addOpenTradeStats(data, monthlyProtocolStats, monthlyProtocolStats.totalOpenedTrades == 1);
+
+    // Yearly stats
+    const yearlyProtocolStats = createOrLoadEpochTradingStatsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    _addOpenTradeStats(data, yearlyProtocolStats, yearlyProtocolStats.totalOpenedTrades == 1);
 }
 
 export class addCloseTradeStatsInput {
@@ -108,6 +150,8 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
     const date = dayWeekMonthYearFromTimestamp(timestamp);
     const dayID = `${date.year}-${date.month}-${date.day}`;
     const weekID = `${date.year}-${date.week}`;
+    const monthID = `${date.year}-${date.month}`;
+    const yearID = `${date.year}`;
 
     // Daily stats
     const dailyStats = createOrLoadEpochTradingStatsRecord(
@@ -127,7 +171,27 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
         collateralID,
         false
     );
-    _addCloseTradeStats(data, weeklyStats, dailyStats.totalClosedTrades == 1);
+    _addCloseTradeStats(data, weeklyStats, weeklyStats.totalClosedTrades == 1);
+
+    // Monthly stats
+    const monthlyStats = createOrLoadEpochTradingStatsRecord(
+        address,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    _addCloseTradeStats(data, monthlyStats, monthlyStats.totalOpenedTrades == 1);
+
+    // Yearly stats
+    const yearlyStats = createOrLoadEpochTradingStatsRecord(
+        address,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    _addCloseTradeStats(data, yearlyStats, yearlyStats.totalOpenedTrades == 1);
 
     // Daily protocol stats
     const dailyProtocolStats = createOrLoadEpochTradingStatsRecord(
@@ -147,7 +211,27 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
         collateralID,
         false
     );
-    _addCloseTradeStats(data, weeklyProtocolStats, dailyProtocolStats.totalClosedTrades == 1);
+    _addCloseTradeStats(data, weeklyProtocolStats, weeklyProtocolStats.totalClosedTrades == 1);
+
+    // Monthly stats
+    const monthlyProtocolStats = createOrLoadEpochTradingStatsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    _addCloseTradeStats(data, monthlyProtocolStats, monthlyProtocolStats.totalOpenedTrades == 1);
+
+    // Yearly stats
+    const yearlyProtocolStats = createOrLoadEpochTradingStatsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    _addCloseTradeStats(data, yearlyProtocolStats, yearlyProtocolStats.totalOpenedTrades == 1);
 
     updatePointsOnClose(
         address,
@@ -307,6 +391,8 @@ function _addStats(
     const date = dayWeekMonthYearFromTimestamp(timestamp);
     const dayID = `${date.year}-${date.month}-${date.day}`;
     const weekID = `${date.year}-${date.week}`;
+    const monthID = `${date.year}-${date.month}`;
+    const yearID = `${date.year}`;
 
     let dailyStats = createOrLoadEpochTradingStatsRecord(
         address,
@@ -326,6 +412,26 @@ function _addStats(
     );
     weeklyStats = _addStat(stat, statName, weeklyStats);
 
+    // Monthly stats
+    let monthlyStats = createOrLoadEpochTradingStatsRecord(
+        address,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    monthlyStats = _addStat(stat, statName, monthlyStats);
+
+    // Yearly stats
+    let yearlyStats = createOrLoadEpochTradingStatsRecord(
+        address,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    yearlyStats = _addStat(stat, statName, yearlyStats);
+
     let dailyProtocolStats = createOrLoadEpochTradingStatsRecord(
         PROTOCOL,
         EPOCH_TYPE.DAY,
@@ -344,12 +450,45 @@ function _addStats(
     );
     weeklyProtocolStats = _addStat(stat, statName, weeklyProtocolStats);
 
+    // Monthly stats
+    let monthlyProtocolStats = createOrLoadEpochTradingStatsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    monthlyProtocolStats = _addStat(stat, statName, monthlyProtocolStats);
+
+    // Yearly stats
+    let yearlyProtocolStats = createOrLoadEpochTradingStatsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    yearlyProtocolStats = _addStat(stat, statName, yearlyProtocolStats);
+
     dailyStats.save();
     weeklyStats.save();
+    monthlyStats.save();
+    yearlyStats.save();
     dailyProtocolStats.save();
     weeklyProtocolStats.save();
+    monthlyProtocolStats.save();
+    yearlyProtocolStats.save();
 
-    return [dailyStats, weeklyStats, dailyProtocolStats, weeklyProtocolStats];
+    return [
+        dailyStats,
+        weeklyStats,
+        monthlyStats,
+        yearlyStats,
+        dailyProtocolStats,
+        weeklyProtocolStats,
+        monthlyProtocolStats,
+        yearlyProtocolStats,
+    ];
 }
 
 function _addStat(

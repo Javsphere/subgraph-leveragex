@@ -42,6 +42,8 @@ export function updatePointsOnClose(
     const date = dayWeekMonthYearFromTimestamp(timestamp);
     const dayID = `${date.year}-${date.month}-${date.day}`;
     const weekID = `${date.year}-${date.week}`;
+    const monthID = `${date.year}-${date.month}`;
+    const yearID = `${date.year}`;
     // load all 4 entries: UserDaily, ProtocolDaily, UserWeekly, ProtocolWeekly
     const userDailyPoints = createOrLoadEpochTradingPointsRecord(
         address,
@@ -71,13 +73,54 @@ export function updatePointsOnClose(
         collateralID,
         false
     );
+    const userMonthlyPoints = createOrLoadEpochTradingPointsRecord(
+        address,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    const protocolMonthlyPoints = createOrLoadEpochTradingPointsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+    const userYearlyPoints = createOrLoadEpochTradingPointsRecord(
+        address,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+    const protocolYearlyPoints = createOrLoadEpochTradingPointsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
 
     if (isTraderEligibleForAbsoluteSkillPoints(weeklyStats)) {
         updateAbsoluteSkillPoints(
             userDailyPoints,
             protocolDailyPoints,
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+        );
+        updateAbsoluteSkillPoints(
             userWeeklyPoints,
             protocolWeeklyPoints,
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+        );
+        updateAbsoluteSkillPoints(
+            userMonthlyPoints,
+            protocolMonthlyPoints,
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+        );
+        updateAbsoluteSkillPoints(
+            userYearlyPoints,
+            protocolYearlyPoints,
             !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
         );
     }
@@ -86,8 +129,27 @@ export function updatePointsOnClose(
         updateRelativeSkillPoints(
             userDailyPoints,
             protocolDailyPoints,
+            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
+                ? weeklyStats.totalPnlPercentage
+                : pnlPercentage
+        );
+        updateRelativeSkillPoints(
             userWeeklyPoints,
             protocolWeeklyPoints,
+            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
+                ? weeklyStats.totalPnlPercentage
+                : pnlPercentage
+        );
+        updateRelativeSkillPoints(
+            userMonthlyPoints,
+            protocolMonthlyPoints,
+            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
+                ? weeklyStats.totalPnlPercentage
+                : pnlPercentage
+        );
+        updateRelativeSkillPoints(
+            userYearlyPoints,
+            protocolYearlyPoints,
             !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
                 ? weeklyStats.totalPnlPercentage
                 : pnlPercentage
@@ -96,154 +158,118 @@ export function updatePointsOnClose(
 
     updateDiversityPoints(
         userDailyPoints,
-        protocolDailyPoints,
         userWeeklyPoints,
+        userMonthlyPoints,
+        userYearlyPoints,
+        protocolDailyPoints,
         protocolWeeklyPoints,
+        protocolMonthlyPoints,
+        protocolYearlyPoints,
         groupNumber,
-        pairNumber,
         volume
     );
 }
 
 export function updateAbsoluteSkillPoints(
-    userDailyPoints: EpochTradingPointsRecord,
-    protocolDailyPoints: EpochTradingPointsRecord,
-    userWeeklyPoints: EpochTradingPointsRecord,
-    protocolWeeklyPoints: EpochTradingPointsRecord,
+    userPoints: EpochTradingPointsRecord,
+    protocolPoints: EpochTradingPointsRecord,
     pnl: BigDecimal
 ): void {
-    let userDailySkillPoints =
-        userDailyPoints.pnl.plus(pnl) > ZERO_BD ? userDailyPoints.pnl.plus(pnl) : ZERO_BD;
-    let userWeeklySkillPoints =
-        userWeeklyPoints.pnl.plus(pnl) > ZERO_BD ? userWeeklyPoints.pnl.plus(pnl) : ZERO_BD;
-    let protocolDailySkillPoints = calculateSkillPoints(
-        userDailyPoints,
-        protocolDailyPoints,
-        pnl,
-        true
-    );
-    let protocolWeeklySkillPoints = calculateSkillPoints(
-        userWeeklyPoints,
-        protocolWeeklyPoints,
-        pnl,
-        true
-    );
+    let userSkillPoints = userPoints.pnl.plus(pnl) > ZERO_BD ? userPoints.pnl.plus(pnl) : ZERO_BD;
+
+    let protocolSkillPoints = calculateSkillPoints(userPoints, protocolPoints, pnl, true);
 
     // update pnls
-    userDailyPoints.pnl = userDailyPoints.pnl.plus(pnl);
-    protocolDailyPoints.pnl = protocolDailyPoints.pnl.plus(pnl);
-    userWeeklyPoints.pnl = userWeeklyPoints.pnl.plus(pnl);
-    protocolWeeklyPoints.pnl = protocolWeeklyPoints.pnl.plus(pnl);
+    userPoints.pnl = userPoints.pnl.plus(pnl);
+    protocolPoints.pnl = protocolPoints.pnl.plus(pnl);
 
     // update skill points
-    userDailyPoints.absSkillPoints = userDailySkillPoints;
-    protocolDailyPoints.absSkillPoints = protocolDailySkillPoints;
-    userWeeklyPoints.absSkillPoints = userWeeklySkillPoints;
-    protocolWeeklyPoints.absSkillPoints = protocolWeeklySkillPoints;
+    userPoints.absSkillPoints = userSkillPoints;
+    protocolPoints.absSkillPoints = protocolSkillPoints;
 
-    userWeeklyPoints.isAbsSkillEligible = true;
-    userDailyPoints.isAbsSkillEligible = true;
+    userPoints.isAbsSkillEligible = true;
 
     // Saving all the entities
-    userDailyPoints.save();
-    protocolDailyPoints.save();
-    userWeeklyPoints.save();
-    protocolWeeklyPoints.save();
+    userPoints.save();
+    protocolPoints.save();
 }
 
 export function updateRelativeSkillPoints(
-    userDailyPoints: EpochTradingPointsRecord,
-    protocolDailyPoints: EpochTradingPointsRecord,
-    userWeeklyPoints: EpochTradingPointsRecord,
-    protocolWeeklyPoints: EpochTradingPointsRecord,
+    userPoints: EpochTradingPointsRecord,
+    protocolPoints: EpochTradingPointsRecord,
     pnlPercentage: BigDecimal
 ): void {
-    let userDailySkillPoints =
-        userDailyPoints.pnlPercentage.plus(pnlPercentage) > ZERO_BD
-            ? userDailyPoints.pnlPercentage.plus(pnlPercentage)
+    let userSkillPoints =
+        userPoints.pnlPercentage.plus(pnlPercentage) > ZERO_BD
+            ? userPoints.pnlPercentage.plus(pnlPercentage)
             : ZERO_BD;
-    let userWeeklySkillPoints =
-        userWeeklyPoints.pnlPercentage.plus(pnlPercentage) > ZERO_BD
-            ? userWeeklyPoints.pnlPercentage.plus(pnlPercentage)
-            : ZERO_BD;
-    let protocolDailySkillPoints = calculateSkillPoints(
-        userDailyPoints,
-        protocolDailyPoints,
-        pnlPercentage,
-        false
-    );
-    let protocolWeeklySkillPoints = calculateSkillPoints(
-        userWeeklyPoints,
-        protocolWeeklyPoints,
+    let protocolSkillPoints = calculateSkillPoints(
+        userPoints,
+        protocolPoints,
         pnlPercentage,
         false
     );
 
     // update pnls
-    userDailyPoints.pnlPercentage = userDailyPoints.pnlPercentage.plus(pnlPercentage);
-    protocolDailyPoints.pnlPercentage = protocolDailyPoints.pnlPercentage.plus(pnlPercentage);
-    userWeeklyPoints.pnlPercentage = userWeeklyPoints.pnlPercentage.plus(pnlPercentage);
-    protocolWeeklyPoints.pnlPercentage = protocolWeeklyPoints.pnlPercentage.plus(pnlPercentage);
+    userPoints.pnlPercentage = userPoints.pnlPercentage.plus(pnlPercentage);
+    protocolPoints.pnlPercentage = protocolPoints.pnlPercentage.plus(pnlPercentage);
 
     // update skill points
-    userDailyPoints.relSkillPoints = userDailySkillPoints;
-    protocolDailyPoints.relSkillPoints = protocolDailySkillPoints;
-    userWeeklyPoints.relSkillPoints = userWeeklySkillPoints;
-    protocolWeeklyPoints.relSkillPoints = protocolWeeklySkillPoints;
+    userPoints.relSkillPoints = userSkillPoints;
+    protocolPoints.relSkillPoints = protocolSkillPoints;
 
-    userWeeklyPoints.isRelSkillEligible = true;
-    userDailyPoints.isRelSkillEligible = true;
+    userPoints.isRelSkillEligible = true;
 
     // Saving all the entities
-    userDailyPoints.save();
-    protocolDailyPoints.save();
-    userWeeklyPoints.save();
-    protocolWeeklyPoints.save();
+    userPoints.save();
+    protocolPoints.save();
 }
 
 export function updateDiversityPoints(
     userDailyPoints: EpochTradingPointsRecord,
-    protocolDailyPoints: EpochTradingPointsRecord,
     userWeeklyPoints: EpochTradingPointsRecord,
+    userMonthlyPoints: EpochTradingPointsRecord,
+    userYearlyPoints: EpochTradingPointsRecord,
+    protocolDailyPoints: EpochTradingPointsRecord,
     protocolWeeklyPoints: EpochTradingPointsRecord,
+    protocolMonthlyPoints: EpochTradingPointsRecord,
+    protocolYearlyPoints: EpochTradingPointsRecord,
     groupNumber: i32,
-    pairNumber: i32,
     volume: BigDecimal
 ): void {
-    let groupId = 0;
-    let volumeThreshold = ZERO_BD;
-    if (groupNumber == 0 && (pairNumber == 0 || pairNumber == 1)) {
-        groupId = 0;
-    } else if (groupNumber == 0 && pairNumber > 1) {
-        groupId = 1;
-    } else if (groupNumber == 1 || groupNumber == 8 || groupNumber == 9) {
-        groupId = 2;
-    } else if (groupNumber == 6 || groupNumber == 7) {
-        groupId = 3;
-    } else {
-        groupId = 4;
-    }
+    let groupId = groupNumber;
+    let volumeThreshold = VOLUME_THRESHOLDS[groupId];
 
-    if (groupId < 4) {
-        volumeThreshold = VOLUME_THRESHOLDS[groupId];
-        if (volume.ge(volumeThreshold) && userWeeklyPoints.groupsTraded[groupId] == ZERO_BD) {
-            userDailyPoints.groupsTraded[groupId] = ONE_BD;
-            protocolDailyPoints.groupsTraded[groupId] = ONE_BD;
-            userWeeklyPoints.groupsTraded[groupId] = ONE_BD;
-            protocolWeeklyPoints.groupsTraded[groupId] = ONE_BD;
+    if (volume.ge(volumeThreshold) && userWeeklyPoints.groupsTraded[groupId] == ZERO_BD) {
+        userDailyPoints.groupsTraded[groupId] = ONE_BD;
+        userWeeklyPoints.groupsTraded[groupId] = ONE_BD;
+        userMonthlyPoints.groupsTraded[groupId] = ONE_BD;
+        userYearlyPoints.groupsTraded[groupId] = ONE_BD;
 
-            userDailyPoints.diversityPoints = userDailyPoints.diversityPoints.plus(ONE_BD);
-            protocolDailyPoints.diversityPoints = protocolDailyPoints.diversityPoints.plus(ONE_BD);
-            userWeeklyPoints.diversityPoints = userWeeklyPoints.diversityPoints.plus(ONE_BD);
-            protocolWeeklyPoints.diversityPoints =
-                protocolWeeklyPoints.diversityPoints.plus(ONE_BD);
+        protocolDailyPoints.groupsTraded[groupId] = ONE_BD;
+        protocolWeeklyPoints.groupsTraded[groupId] = ONE_BD;
+        protocolMonthlyPoints.groupsTraded[groupId] = ONE_BD;
+        protocolYearlyPoints.groupsTraded[groupId] = ONE_BD;
 
-            // Saving all the entities
-            userDailyPoints.save();
-            protocolDailyPoints.save();
-            userWeeklyPoints.save();
-            protocolWeeklyPoints.save();
-        }
+        userDailyPoints.diversityPoints = userDailyPoints.diversityPoints.plus(ONE_BD);
+        userWeeklyPoints.diversityPoints = userWeeklyPoints.diversityPoints.plus(ONE_BD);
+        userMonthlyPoints.diversityPoints = userMonthlyPoints.diversityPoints.plus(ONE_BD);
+        userYearlyPoints.diversityPoints = userYearlyPoints.diversityPoints.plus(ONE_BD);
+
+        protocolDailyPoints.diversityPoints = protocolDailyPoints.diversityPoints.plus(ONE_BD);
+        protocolWeeklyPoints.diversityPoints = protocolWeeklyPoints.diversityPoints.plus(ONE_BD);
+        protocolMonthlyPoints.diversityPoints = protocolMonthlyPoints.diversityPoints.plus(ONE_BD);
+        protocolYearlyPoints.diversityPoints = protocolYearlyPoints.diversityPoints.plus(ONE_BD);
+
+        // Saving all the entities
+        userDailyPoints.save();
+        userWeeklyPoints.save();
+        userMonthlyPoints.save();
+        userYearlyPoints.save();
+        protocolDailyPoints.save();
+        protocolWeeklyPoints.save();
+        protocolMonthlyPoints.save();
+        protocolYearlyPoints.save();
     }
 }
 
@@ -280,9 +306,19 @@ export function updateFeeBasedPoints(
     const date = dayWeekMonthYearFromTimestamp(timestamp);
     const dayID = `${date.year}-${date.month}-${date.day}`;
     const weekID = `${date.year}-${date.week}`;
+    const monthID = `${date.year}-${date.month}`;
+    const yearID = `${date.year}`;
 
     let userDailyStats = createOrLoadEpochTradingPointsRecord(
         address,
+        EPOCH_TYPE.DAY,
+        dayID,
+        collateralID,
+        false
+    );
+
+    let dailyProtocolStats = createOrLoadEpochTradingPointsRecord(
+        PROTOCOL,
         EPOCH_TYPE.DAY,
         dayID,
         collateralID,
@@ -297,14 +333,6 @@ export function updateFeeBasedPoints(
         false
     );
 
-    let dailyProtocolStats = createOrLoadEpochTradingPointsRecord(
-        PROTOCOL,
-        EPOCH_TYPE.DAY,
-        dayID,
-        collateralID,
-        false
-    );
-
     let weeklyProtocolStats = createOrLoadEpochTradingPointsRecord(
         PROTOCOL,
         EPOCH_TYPE.WEEK,
@@ -313,13 +341,59 @@ export function updateFeeBasedPoints(
         false
     );
 
-    updateFeePoints(stat, userDailyStats, userWeeklyStats, dailyProtocolStats, weeklyProtocolStats);
+    let userMonthlyStats = createOrLoadEpochTradingPointsRecord(
+        address,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+
+    let monthlyProtocolStats = createOrLoadEpochTradingPointsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.MONTH,
+        monthID,
+        collateralID,
+        false
+    );
+
+    let userYearlyStats = createOrLoadEpochTradingPointsRecord(
+        address,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+
+    let yearlyProtocolStats = createOrLoadEpochTradingPointsRecord(
+        PROTOCOL,
+        EPOCH_TYPE.YEAR,
+        yearID,
+        collateralID,
+        false
+    );
+
+    updateFeePoints(
+        stat,
+        userDailyStats,
+        userWeeklyStats,
+        userMonthlyStats,
+        userYearlyStats,
+        dailyProtocolStats,
+        weeklyProtocolStats,
+        monthlyProtocolStats,
+        yearlyProtocolStats
+    );
     updateLoyaltyPoints(
         stat,
         userDailyStats,
         userWeeklyStats,
+        userMonthlyStats,
+        userYearlyStats,
         dailyProtocolStats,
-        weeklyProtocolStats
+        weeklyProtocolStats,
+        monthlyProtocolStats,
+        yearlyProtocolStats
     );
 }
 
@@ -327,34 +401,54 @@ export function updateFeePoints(
     stat: BigDecimal,
     userDailyStats: EpochTradingPointsRecord,
     userWeeklyStats: EpochTradingPointsRecord,
+    userMonthStats: EpochTradingPointsRecord,
+    userYearStats: EpochTradingPointsRecord,
     protocolDailyStats: EpochTradingPointsRecord,
-    protocolWeeklyStats: EpochTradingPointsRecord
+    protocolWeeklyStats: EpochTradingPointsRecord,
+    protocolMonthlyStats: EpochTradingPointsRecord,
+    protocolYearlyStats: EpochTradingPointsRecord
 ): void {
     // Updating total fees
     userDailyStats.totalFeesPaid = userDailyStats.totalFeesPaid.plus(stat);
     userWeeklyStats.totalFeesPaid = userWeeklyStats.totalFeesPaid.plus(stat);
+    userMonthStats.totalFeesPaid = userMonthStats.totalFeesPaid.plus(stat);
+    userYearStats.totalFeesPaid = userYearStats.totalFeesPaid.plus(stat);
     protocolDailyStats.totalFeesPaid = protocolDailyStats.totalFeesPaid.plus(stat);
     protocolWeeklyStats.totalFeesPaid = protocolWeeklyStats.totalFeesPaid.plus(stat);
+    protocolMonthlyStats.totalFeesPaid = protocolMonthlyStats.totalFeesPaid.plus(stat);
+    protocolYearlyStats.totalFeesPaid = protocolYearlyStats.totalFeesPaid.plus(stat);
 
     // Updating fee points
     userDailyStats.feePoints = userDailyStats.feePoints.plus(stat);
     userWeeklyStats.feePoints = userWeeklyStats.feePoints.plus(stat);
+    userMonthStats.feePoints = userMonthStats.feePoints.plus(stat);
+    userYearStats.feePoints = userYearStats.feePoints.plus(stat);
     protocolDailyStats.feePoints = protocolDailyStats.feePoints.plus(stat);
     protocolWeeklyStats.feePoints = protocolWeeklyStats.feePoints.plus(stat);
+    protocolMonthlyStats.feePoints = protocolMonthlyStats.feePoints.plus(stat);
+    protocolYearlyStats.feePoints = protocolYearlyStats.feePoints.plus(stat);
 
     // Saving all the entities
     userDailyStats.save();
-    protocolDailyStats.save();
     userWeeklyStats.save();
+    userMonthStats.save();
+    userYearStats.save();
+    protocolDailyStats.save();
     protocolWeeklyStats.save();
+    protocolMonthlyStats.save();
+    protocolYearlyStats.save();
 }
 
 export function updateLoyaltyPoints(
     stat: BigDecimal,
     userDailyStats: EpochTradingPointsRecord,
     userWeeklyStats: EpochTradingPointsRecord,
+    userMonthStats: EpochTradingPointsRecord,
+    userYearStats: EpochTradingPointsRecord,
     protocolDailyStats: EpochTradingPointsRecord,
-    protocolWeeklyStats: EpochTradingPointsRecord
+    protocolWeeklyStats: EpochTradingPointsRecord,
+    protocolMonthlyStats: EpochTradingPointsRecord,
+    protocolYearlyStats: EpochTradingPointsRecord
 ): void {
     let totalUserDailyFees = userDailyStats.totalFeesPaid.plus(stat);
     let oldLoyaltyPoints = userDailyStats.loyaltyPoints;
@@ -365,18 +459,34 @@ export function updateLoyaltyPoints(
     userWeeklyStats.loyaltyPoints = userWeeklyStats.loyaltyPoints
         .plus(newLoyaltyPoints)
         .minus(oldLoyaltyPoints);
+    userMonthStats.loyaltyPoints = userMonthStats.loyaltyPoints
+        .plus(newLoyaltyPoints)
+        .minus(oldLoyaltyPoints);
+    userYearStats.loyaltyPoints = userYearStats.loyaltyPoints
+        .plus(newLoyaltyPoints)
+        .minus(oldLoyaltyPoints);
     protocolDailyStats.loyaltyPoints = protocolDailyStats.loyaltyPoints
         .plus(newLoyaltyPoints)
         .minus(oldLoyaltyPoints);
     protocolWeeklyStats.loyaltyPoints = protocolWeeklyStats.loyaltyPoints
         .plus(newLoyaltyPoints)
         .minus(oldLoyaltyPoints);
+    protocolMonthlyStats.loyaltyPoints = protocolMonthlyStats.loyaltyPoints
+        .plus(newLoyaltyPoints)
+        .minus(oldLoyaltyPoints);
+    protocolYearlyStats.loyaltyPoints = protocolYearlyStats.loyaltyPoints
+        .plus(newLoyaltyPoints)
+        .minus(oldLoyaltyPoints);
 
     // Saving all the entities
     userDailyStats.save();
-    protocolDailyStats.save();
     userWeeklyStats.save();
+    userMonthStats.save();
+    userYearStats.save();
+    protocolDailyStats.save();
     protocolWeeklyStats.save();
+    protocolMonthlyStats.save();
+    protocolYearlyStats.save();
 }
 
 export function calculateLoyaltyPoints(fees: BigDecimal): BigDecimal {

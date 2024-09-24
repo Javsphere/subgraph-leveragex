@@ -28,6 +28,8 @@ enum OrderType {
 enum EpochType {
     day
     week
+    month
+    year
 }
 
 type Trade @entity {

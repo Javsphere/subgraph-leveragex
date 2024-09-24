@@ -33,10 +33,14 @@ export const PROTOCOL = "protocol";
 class EpochTypes {
     DAY!: string;
     WEEK!: string;
+    MONTH!: string;
+    YEAR!: string;
 }
 export const EPOCH_TYPE: EpochTypes = {
     DAY: "day",
     WEEK: "week",
+    MONTH: "month",
+    YEAR: "year",
 };
 
 function toBigInt(integer: i32): BigInt {
