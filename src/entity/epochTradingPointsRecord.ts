@@ -6,6 +6,7 @@ import {
     ONE_BD,
     PROTOCOL,
     VOLUME_THRESHOLDS,
+    WEI_E2_BD,
     ZERO_BD,
 } from "../common";
 
@@ -33,7 +34,7 @@ export function updatePointsOnClose(
     timestamp: BigInt,
     collateralID: i32,
     pnl: BigDecimal,
-    pnlPercentage: BigDecimal,
+    tradedAmount: BigDecimal,
     groupNumber: i32,
     pairNumber: i32,
     volume: BigDecimal,
@@ -106,54 +107,34 @@ export function updatePointsOnClose(
         updateAbsoluteSkillPoints(
             userDailyPoints,
             protocolDailyPoints,
-            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl, // if trader just became eligible, use totalPnl
+            tradedAmount
         );
         updateAbsoluteSkillPoints(
             userWeeklyPoints,
             protocolWeeklyPoints,
-            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl, // if trader just became eligible, use totalPnl
+            tradedAmount
         );
         updateAbsoluteSkillPoints(
             userMonthlyPoints,
             protocolMonthlyPoints,
-            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl, // if trader just became eligible, use totalPnl
+            tradedAmount
         );
         updateAbsoluteSkillPoints(
             userYearlyPoints,
             protocolYearlyPoints,
-            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl // if trader just became eligible, use totalPnl
+            !userWeeklyPoints.isAbsSkillEligible ? weeklyStats.totalPnl : pnl, // if trader just became eligible, use totalPnl
+            tradedAmount
         );
     }
     // Determine if trader is eligible yet for relative skill points
     if (isTraderEligibleForRelativeSkillPoints(weeklyStats)) {
-        updateRelativeSkillPoints(
-            userDailyPoints,
-            protocolDailyPoints,
-            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
-                ? weeklyStats.totalPnlPercentage
-                : pnlPercentage
-        );
-        updateRelativeSkillPoints(
-            userWeeklyPoints,
-            protocolWeeklyPoints,
-            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
-                ? weeklyStats.totalPnlPercentage
-                : pnlPercentage
-        );
-        updateRelativeSkillPoints(
-            userMonthlyPoints,
-            protocolMonthlyPoints,
-            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
-                ? weeklyStats.totalPnlPercentage
-                : pnlPercentage
-        );
-        updateRelativeSkillPoints(
-            userYearlyPoints,
-            protocolYearlyPoints,
-            !userWeeklyPoints.isRelSkillEligible // if trader just became eligible, use totalPnlPercentage
-                ? weeklyStats.totalPnlPercentage
-                : pnlPercentage
-        );
+        updateRelativeSkillPoints(userDailyPoints, protocolDailyPoints);
+        updateRelativeSkillPoints(userWeeklyPoints, protocolWeeklyPoints);
+        updateRelativeSkillPoints(userMonthlyPoints, protocolMonthlyPoints);
+        updateRelativeSkillPoints(userYearlyPoints, protocolYearlyPoints);
     }
 
     updateDiversityPoints(
@@ -173,7 +154,8 @@ export function updatePointsOnClose(
 export function updateAbsoluteSkillPoints(
     userPoints: EpochTradingPointsRecord,
     protocolPoints: EpochTradingPointsRecord,
-    pnl: BigDecimal
+    pnl: BigDecimal,
+    tradedAmount: BigDecimal
 ): void {
     let userSkillPoints = userPoints.pnl.plus(pnl) > ZERO_BD ? userPoints.pnl.plus(pnl) : ZERO_BD;
 
@@ -181,7 +163,11 @@ export function updateAbsoluteSkillPoints(
 
     // update pnls
     userPoints.pnl = userPoints.pnl.plus(pnl);
-    protocolPoints.pnl = protocolPoints.pnl.plus(pnl);
+    // reverse as user pnl
+    protocolPoints.pnl = protocolPoints.pnl.minus(pnl);
+
+    userPoints.totalTradedAmount = userPoints.totalTradedAmount.plus(tradedAmount);
+    protocolPoints.totalTradedAmount = protocolPoints.totalTradedAmount.plus(tradedAmount);
 
     // update skill points
     userPoints.absSkillPoints = userSkillPoints;
@@ -196,13 +182,10 @@ export function updateAbsoluteSkillPoints(
 
 export function updateRelativeSkillPoints(
     userPoints: EpochTradingPointsRecord,
-    protocolPoints: EpochTradingPointsRecord,
-    pnlPercentage: BigDecimal
+    protocolPoints: EpochTradingPointsRecord
 ): void {
-    let userSkillPoints =
-        userPoints.pnlPercentage.plus(pnlPercentage) > ZERO_BD
-            ? userPoints.pnlPercentage.plus(pnlPercentage)
-            : ZERO_BD;
+    const pnlPercentage = userPoints.pnl.div(userPoints.totalTradedAmount).times(WEI_E2_BD);
+    let userSkillPoints = pnlPercentage > ZERO_BD ? pnlPercentage : ZERO_BD;
     let protocolSkillPoints = calculateSkillPoints(
         userPoints,
         protocolPoints,
@@ -211,8 +194,10 @@ export function updateRelativeSkillPoints(
     );
 
     // update pnls
-    userPoints.pnlPercentage = userPoints.pnlPercentage.plus(pnlPercentage);
-    protocolPoints.pnlPercentage = protocolPoints.pnlPercentage.plus(pnlPercentage);
+    userPoints.pnlPercentage = pnlPercentage;
+    protocolPoints.pnlPercentage = protocolPoints.pnl
+        .div(protocolPoints.totalTradedAmount)
+        .times(WEI_E2_BD);
 
     // update skill points
     userPoints.relSkillPoints = userSkillPoints;
@@ -532,6 +517,7 @@ export function createOrLoadEpochTradingPointsRecord(
         epochTradingPointsRecord.epochType = epochType;
         epochTradingPointsRecord.collateralID = collateralID;
         epochTradingPointsRecord.totalFeesPaid = BigDecimal.fromString("0");
+        epochTradingPointsRecord.totalTradedAmount = BigDecimal.fromString("0");
         epochTradingPointsRecord.pnl = BigDecimal.fromString("0");
         epochTradingPointsRecord.pnlPercentage = BigDecimal.fromString("0");
         epochTradingPointsRecord.groupsTraded = [ZERO_BD, ZERO_BD, ZERO_BD, ZERO_BD];

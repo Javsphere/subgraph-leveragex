@@ -81,13 +81,13 @@ export function handleMarketExecuted(event: MarketExecuted): void {
             pairIndex: params.t.pairIndex,
             groupIndex: groupIndex.toI32(),
             positionSize: volume,
+            leverage: leverage,
             timestamp: event.block.timestamp,
         });
     } else {
         const pnl = BigDecimal.fromString(params.amountSentToTrader.toString())
             .div(WEI_E18_BD)
             .minus(trade.collateralAmount);
-        const pnlPercentage = pnl.div(trade.collateralAmount).times(WEI_E2_BD);
         addCloseTradeStats({
             collateralID: params.t.collateralIndex,
             address: params.t.user.toHexString(),
@@ -95,7 +95,7 @@ export function handleMarketExecuted(event: MarketExecuted): void {
             groupIndex: groupIndex.toI32(),
             positionSize: volume,
             pnl: pnl,
-            pnlPercentage: pnlPercentage,
+            tradedAmount: trade.collateralAmount,
             timestamp: event.block.timestamp,
         });
     }
@@ -155,13 +155,13 @@ export function handleLimitExecuted(event: LimitExecuted): void {
             pairIndex: params.t.pairIndex,
             groupIndex: groupIndex.toI32(),
             positionSize: volume,
+            leverage: leverage,
             timestamp: event.block.timestamp,
         });
     } else {
         const pnl = BigDecimal.fromString(params.amountSentToTrader.toString())
             .div(WEI_E18_BD)
             .minus(trade.collateralAmount);
-        const pnlPercentage = pnl.div(trade.collateralAmount).times(WEI_E2_BD);
         addCloseTradeStats({
             collateralID: params.t.collateralIndex,
             address: params.t.user.toHexString(),
@@ -169,7 +169,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
             groupIndex: groupIndex.toI32(),
             positionSize: volume,
             pnl: pnl,
-            pnlPercentage: pnlPercentage,
+            tradedAmount: trade.collateralAmount,
             timestamp: event.block.timestamp,
         });
     }
@@ -254,6 +254,7 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
         pairIndex: params.pairIndex.toI32(),
         groupIndex: groupIndex.toI32(),
         positionSize: volume,
+        leverage: BigDecimal.fromString(params.values.newLeverage.toString()).div(WEI_E3_BD),
         timestamp: event.block.timestamp,
     });
 }
@@ -295,7 +296,6 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
         .div(leverage);
 
     const pnl = BigDecimal.fromString(pnlWithFees.minus(totalFees).toString()).div(WEI_E18_BD);
-    const pnlPercentage = pnl.div(initialCollateral).times(WEI_E2_BD);
 
     addCloseTradeStats({
         collateralID: params.collateralIndex,
@@ -304,7 +304,7 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
         groupIndex: groupIndex.toI32(),
         positionSize: volume,
         pnl: pnl,
-        pnlPercentage: pnlPercentage,
+        tradedAmount: initialCollateral,
         timestamp: event.block.timestamp,
     });
 }

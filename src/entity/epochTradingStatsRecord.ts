@@ -1,6 +1,6 @@
 import { EpochTradingStatsRecord } from "../../generated/schema";
 import { BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
-import { dayWeekMonthYearFromTimestamp, EPOCH_TYPE, PROTOCOL, ZERO_BD } from "../common";
+import { dayWeekMonthYearFromTimestamp, EPOCH_TYPE, PROTOCOL, WEI_E2_BD, ZERO_BD } from "../common";
 import { updatePointsOnClose } from "./epochTradingPointsRecord";
 
 /**
@@ -12,6 +12,7 @@ export class addOpenTradeStatsInput {
     pairIndex: i32;
     groupIndex: i32;
     positionSize: BigDecimal;
+    leverage: BigDecimal;
     timestamp: BigInt;
 }
 export function addOpenTradeStats(data: addOpenTradeStatsInput): void {
@@ -121,7 +122,7 @@ export class addCloseTradeStatsInput {
     groupIndex: i32;
     positionSize: BigDecimal;
     pnl: BigDecimal;
-    pnlPercentage: BigDecimal;
+    tradedAmount: BigDecimal;
     timestamp: BigInt;
 }
 
@@ -134,16 +135,16 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
     const pairIndex = data.pairIndex;
     const positionSize = data.positionSize;
     const pnl = data.pnl;
-    const pnlPercentage = data.pnlPercentage;
+    const tradedAmount = data.tradedAmount;
     const timestamp = data.timestamp;
     log.info(
-        "[addCloseTradeStats] address {} pairIndex {}, positionSize {}, pnl {}, pnlPercentage {}",
+        "[addCloseTradeStats] address {} pairIndex {}, positionSize {}, pnl {}, tradedAmount {}",
         [
             address,
             pairIndex.toString(),
             positionSize.toString(),
             pnl.toString(),
-            pnlPercentage.toString(),
+            tradedAmount.toString(),
         ]
     );
 
@@ -201,7 +202,7 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
         collateralID,
         false
     );
-    _addCloseTradeStats(data, dailyProtocolStats);
+    _addCloseTradeStats(data, dailyProtocolStats, false, true);
 
     // Weekly protocol stats
     const weeklyProtocolStats = createOrLoadEpochTradingStatsRecord(
@@ -211,7 +212,12 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
         collateralID,
         false
     );
-    _addCloseTradeStats(data, weeklyProtocolStats, weeklyProtocolStats.totalClosedTrades == 1);
+    _addCloseTradeStats(
+        data,
+        weeklyProtocolStats,
+        weeklyProtocolStats.totalClosedTrades == 1,
+        true
+    );
 
     // Monthly stats
     const monthlyProtocolStats = createOrLoadEpochTradingStatsRecord(
@@ -221,7 +227,12 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
         collateralID,
         false
     );
-    _addCloseTradeStats(data, monthlyProtocolStats, monthlyProtocolStats.totalOpenedTrades == 1);
+    _addCloseTradeStats(
+        data,
+        monthlyProtocolStats,
+        monthlyProtocolStats.totalOpenedTrades == 1,
+        true
+    );
 
     // Yearly stats
     const yearlyProtocolStats = createOrLoadEpochTradingStatsRecord(
@@ -231,14 +242,19 @@ export function addCloseTradeStats(data: addCloseTradeStatsInput): void {
         collateralID,
         false
     );
-    _addCloseTradeStats(data, yearlyProtocolStats, yearlyProtocolStats.totalOpenedTrades == 1);
+    _addCloseTradeStats(
+        data,
+        yearlyProtocolStats,
+        yearlyProtocolStats.totalOpenedTrades == 1,
+        true
+    );
 
     updatePointsOnClose(
         address,
         timestamp,
         collateralID,
         data.pnl,
-        data.pnlPercentage,
+        data.tradedAmount,
         data.groupIndex,
         data.pairIndex,
         data.positionSize,
@@ -257,6 +273,7 @@ function _addOpenTradeStats(
     const pairIndex = data.pairIndex;
     const groupIndex = data.groupIndex;
     const positionSize = data.positionSize;
+    const leverage = data.leverage;
 
     // Make sure volume array is initialized and large enough for groupIndex
     const volumePerGroupArray = currentStats.totalVolumePerGroup;
@@ -277,7 +294,11 @@ function _addOpenTradeStats(
         currentStats.pairsTraded = pairsTradedArray;
     }
 
+    currentStats.sumLeverage = currentStats.sumLeverage.plus(leverage);
     currentStats.totalOpenedTrades = currentStats.totalOpenedTrades + 1;
+    currentStats.totalAvgLeverage = currentStats.sumLeverage.div(
+        BigDecimal.fromString(currentStats.totalOpenedTrades.toString())
+    );
 
     if (firstOpenedTrade) {
         currentStats.totalDaysOpenedTrades = currentStats.totalDaysOpenedTrades + 1;
@@ -293,13 +314,14 @@ function _addOpenTradeStats(
 function _addCloseTradeStats(
     data: addCloseTradeStatsInput,
     currentStats: EpochTradingStatsRecord,
-    firstClosedTrade: boolean = false
+    firstClosedTrade: boolean = false,
+    isProtocol: boolean = false
 ): EpochTradingStatsRecord {
     const pairIndex = data.pairIndex;
     const groupIndex = data.groupIndex;
     const positionSize = data.positionSize;
     const pnl = data.pnl;
-    const pnlPercentage = data.pnlPercentage;
+    const tradedAmount = data.tradedAmount;
 
     // Make sure volume array is initialized and large enough for groupIndex
     const volumePerGroupArray = currentStats.totalVolumePerGroup;
@@ -313,11 +335,16 @@ function _addCloseTradeStats(
     volumePerGroupArray[groupIndex] = volumePerGroupArray[groupIndex].plus(positionSize);
     currentStats.totalVolumePerGroup = volumePerGroupArray;
 
-    // Add pnl
-    currentStats.totalPnl = currentStats.totalPnl.plus(pnl);
+    // Add pnl (reverse for protocol)
+    currentStats.totalPnl = isProtocol
+        ? currentStats.totalPnl.minus(pnl)
+        : currentStats.totalPnl.plus(pnl);
+    currentStats.totalTradedAmount = currentStats.totalTradedAmount.plus(tradedAmount);
 
     // Add pnl percentage
-    currentStats.totalPnlPercentage = currentStats.totalPnlPercentage.plus(pnlPercentage);
+    currentStats.totalPnlPercentage = currentStats.totalPnl
+        .div(currentStats.totalTradedAmount)
+        .times(WEI_E2_BD);
 
     // Mark pair as traded if it's not already
     const pairsTradedArray = currentStats.pairsTraded;
@@ -542,6 +569,7 @@ export function createOrLoadEpochTradingStatsRecord(
         epochTradingStatsRecord.totalVolumePerGroup = [];
         epochTradingStatsRecord.totalBorrowingFees = ZERO_BD;
         epochTradingStatsRecord.pairsTraded = [];
+        epochTradingStatsRecord.totalTradedAmount = ZERO_BD;
         epochTradingStatsRecord.totalPnl = ZERO_BD;
         epochTradingStatsRecord.totalPnlPercentage = ZERO_BD;
         // Add govFees, referralFees, triggerFees, lpFees, stakerFees
@@ -553,6 +581,8 @@ export function createOrLoadEpochTradingStatsRecord(
         epochTradingStatsRecord.totalClosedTrades = 0;
         epochTradingStatsRecord.totalDaysOpenedTrades = 0;
         epochTradingStatsRecord.totalDaysClosedTrades = 0;
+        epochTradingStatsRecord.sumLeverage = ZERO_BD;
+        epochTradingStatsRecord.totalAvgLeverage = ZERO_BD;
 
         if (save) {
             epochTradingStatsRecord.save();

@@ -1,3 +1,3 @@
 # subgraph-leveragex
 
-Current graph version - v0.1.17
+Current graph version - v0.1.20

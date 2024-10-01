@@ -8,10 +8,10 @@
         "codegen": "graph codegen",
         "test": "graph test -v 0.5.4",
         "test:ci": "npm test",
-        "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ javsphere-testnet",
-        "create-local": "graph create --node http://localhost:8020/ javsphere-testnet",
-        "remove-local": "graph remove --node http://localhost:8020/ javsphere-testnet",
-        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 javsphere-testnet"
+        "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ leveragex-testnet",
+        "create-local": "graph create --node http://localhost:8020/ leveragex-testnet",
+        "remove-local": "graph remove --node http://localhost:8020/ leveragex-testnet",
+        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 leveragex-testnet"
     },
     "engines": {
         "node": "^20.5.0",

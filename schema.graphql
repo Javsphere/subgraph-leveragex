@@ -114,6 +114,9 @@ type EpochTradingStatsRecord @entity {
     "Pairs Traded"
     pairsTraded: [Int!]!
 
+    "Total traded amount"
+    totalTradedAmount: BigDecimal!
+
     "Total PnL"
     totalPnl: BigDecimal!
 
@@ -143,6 +146,9 @@ type EpochTradingStatsRecord @entity {
 
     "Total days a trade was opened"
     totalDaysOpenedTrades: Int
+
+    sumLeverage: BigDecimal!
+    totalAvgLeverage: BigDecimal!
 }
 
 type EpochTradingPointsRecord @entity {
@@ -152,6 +158,7 @@ type EpochTradingPointsRecord @entity {
     epochType: EpochType!
     collateralID: Int!
     totalFeesPaid: BigDecimal!
+    totalTradedAmount: BigDecimal!
     pnl: BigDecimal!
     pnlPercentage: BigDecimal!
     groupsTraded: [BigDecimal!]!
