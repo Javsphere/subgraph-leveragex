@@ -1,4 +1,4 @@
-import { BigInt, BigDecimal, Address } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
 import { LeverageDiamond } from "../generated/LeverageDiamond/LeverageDiamond";
 import { constants } from "../generated/constants";
 
@@ -36,6 +36,7 @@ class EpochTypes {
     MONTH!: string;
     YEAR!: string;
 }
+
 export const EPOCH_TYPE: EpochTypes = {
     DAY: "day",
     WEEK: "week",
@@ -59,6 +60,34 @@ class DayWeekMonthYear {
         this.month = month.toString().padStart(2, "0");
         this.year = year.toString();
     }
+}
+
+function getWeekNumber(day: BigInt, month: BigInt, year: BigInt): BigInt {
+    // Function to check if a year is a leap year
+    function isLeapYear(year: BigInt): boolean {
+        return (
+            (year.mod(toBigInt(4)).equals(toBigInt(0)) &&
+                year.mod(toBigInt(100)).notEqual(toBigInt(0))) ||
+            year.mod(toBigInt(400)).equals(toBigInt(0))
+        );
+    }
+
+    // Days in each month
+    const monthDays = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    // Calculate the day of the year as a BigInt
+    let dayOfYear = toBigInt(0);
+    for (let i = 0; i < month.toI32() - 1; i++) {
+        dayOfYear = dayOfYear.plus(toBigInt(monthDays[i])); // Add days of previous months
+    }
+    dayOfYear = dayOfYear.plus(day); // Add the days of the current month
+
+    // Calculate the week number (1-indexed) using BigInt
+    const weekNumber = dayOfYear.mod(toBigInt(7)).equals(toBigInt(0))
+        ? dayOfYear.div(toBigInt(7)) // If it’s exactly divisible, use that
+        : dayOfYear.div(toBigInt(7)).plus(toBigInt(1)); // Otherwise, round up
+
+    return weekNumber < toBigInt(53) ? weekNumber : weekNumber.minus(toBigInt(52));
 }
 
 export function dayWeekMonthYearFromTimestamp(timestamp: BigInt): DayWeekMonthYear {
@@ -100,11 +129,11 @@ export function dayWeekMonthYearFromTimestamp(timestamp: BigInt): DayWeekMonthYe
         )
         .plus(toBigInt(2)); // [1, 31]
 
-    let week = dayOfYear.div(toBigInt(7)).plus(ONE_BI);
-
     let month = monthZeroIndexed.plus(monthZeroIndexed < toBigInt(10) ? toBigInt(3) : toBigInt(-9)); // [1, 12]
 
     year = month <= toBigInt(2) ? year.plus(ONE_BI) : year;
+
+    let week = getWeekNumber(day, month, year);
 
     return new DayWeekMonthYear(day, week, month, year);
 }
