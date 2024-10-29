@@ -1,9 +1,11 @@
 import { Address, BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
 import { LeverageDiamond } from "../generated/LeverageDiamond/LeverageDiamond";
 import { constants } from "../generated/constants";
+import { Bytes } from "@graphprotocol/graph-ts/common/collections";
 
 export const ZERO_BI = BigInt.zero();
 export const ZERO_BD = BigDecimal.fromString("0");
+export const ZERO_BYTES = Bytes.fromHexString("0x") as Bytes;
 export const ONE_BI = BigInt.fromI32(1);
 export const ONE_BD = BigDecimal.fromString("1");
 const SECONDS_IN_DAY = BigInt.fromI32(86400);

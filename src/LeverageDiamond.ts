@@ -6,6 +6,7 @@ import {
     LimitExecuted,
     MarketExecuted,
     OpenLimitCanceled,
+    OpenOrderPlaced,
     PositionSizeDecreaseExecuted,
     PositionSizeIncreaseExecuted,
     ReferralFeeCharged,
@@ -29,6 +30,7 @@ import {
     addReferralFeeStats,
     addStakerFeeStats,
 } from "./entity/epochTradingStatsRecord";
+import { closeOpenOrder, saveOpenOrder } from "./entity/openOrders";
 
 export function handleMarketExecuted(event: MarketExecuted): void {
     const params = event.params;
@@ -110,6 +112,8 @@ export function handleLimitExecuted(event: LimitExecuted): void {
     const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
 
     const isOpen = params.percentProfit == new BigInt(0) && params.orderType != 6;
+
+    closeOpenOrder(params.t.user, params.t.index, event.transaction.hash);
 
     const trade = saveTrade(
         params.t.user,
@@ -383,5 +387,16 @@ export function handleBorrowingFeeCharged(event: BorrowingFeeCharged): void {
         borrowingFee,
         event.block.timestamp,
         params.collateralIndex
+    );
+}
+
+export function handleOpenOrderPlaced(event: OpenOrderPlaced): void {
+    const params = event.params;
+    saveOpenOrder(
+        params.trader,
+        params.index,
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 }

@@ -69,6 +69,18 @@ type OrdersHistory @entity {
     date: BigInt!
 }
 
+type OpenOrder @entity {
+    id: ID!
+    user: Bytes!
+    index: BigInt!
+    isOpen: Boolean!
+
+    block: BigInt!
+    openTx: Bytes!
+    closeTx: Bytes!
+    date: BigInt!
+}
+
 type BorrowingProviderHistory @entity {
     id: Bytes!
     address: Bytes!
