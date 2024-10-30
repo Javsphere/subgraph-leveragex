@@ -32,5 +32,7 @@ export function closeOpenOrder(user: Address, index: BigInt, tx: Bytes): void {
     if (order && order.isOpen) {
         order.isOpen = false;
         order.closeTx = tx;
+
+        order.save();
     }
 }

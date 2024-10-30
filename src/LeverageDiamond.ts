@@ -182,7 +182,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
 export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
     const params = event.params;
 
-    // closeOpenOrder(params.trader, params.index, event.transaction.hash);
+    closeOpenOrder(params.trader, params.index, event.transaction.hash);
 }
 
 export function handleTradePositionUpdated(event: TradePositionUpdated): void {}
