@@ -181,43 +181,8 @@ export function handleLimitExecuted(event: LimitExecuted): void {
 
 export function handleOpenLimitCanceled(event: OpenLimitCanceled): void {
     const params = event.params;
-    const trade = saveTrade(
-        params.trader,
-        params.index,
-        params.pairIndex,
-        BigDecimal.fromString("0"),
-        false,
-        false,
-        0,
-        0,
-        BigDecimal.fromString("0"),
-        BigDecimal.fromString("0"),
-        BigDecimal.fromString("0"),
-        BigDecimal.fromString("0"),
-        event.block.number,
-        event.transaction.hash,
-        event.block.timestamp
-    );
 
-    saveOrderHistory(
-        trade,
-        false,
-        BigDecimal.fromString("0"),
-        trade.collateralAmount,
-        BigDecimal.fromString("0"),
-        BigDecimal.fromString("0"),
-        101,
-        event.block.number,
-        event.transaction.hash,
-        event.block.timestamp
-    );
-
-    savePairsStatistic(
-        BigInt.fromI32(trade.collateralIndex),
-        BigInt.fromI32(trade.pairIndex),
-        trade.long,
-        false
-    );
+    // closeOpenOrder(params.trader, params.index, event.transaction.hash);
 }
 
 export function handleTradePositionUpdated(event: TradePositionUpdated): void {}
