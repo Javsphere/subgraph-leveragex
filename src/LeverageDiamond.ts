@@ -113,7 +113,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
 
     const isOpen = params.percentProfit == new BigInt(0) && params.orderType != 6;
 
-    closeOpenOrder(params.t.user, params.t.index, event.transaction.hash);
+    closeOpenOrder(params.orderId.user, params.orderId.index, event.transaction.hash);
 
     const trade = saveTrade(
         params.t.user,
