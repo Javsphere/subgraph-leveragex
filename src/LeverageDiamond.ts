@@ -20,7 +20,7 @@ import { saveOrderHistory } from "./entity/ordersHistory";
 import { BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
 import { savePairsStatistic } from "./entity/pairsStatistics";
 import { updateFeeBasedPoints } from "./entity/epochTradingPointsRecord";
-import { getGroupIndex, WEI_E18_BD, WEI_E2_BD, WEI_E3_BD } from "./common";
+import { getGroupIndex, TOKEN_DECIMALS, WEI_E3_BD } from "./common";
 import {
     addBorrowingFeeStats,
     addCloseTradeStats,
@@ -35,7 +35,9 @@ import { closeOpenOrder, saveOpenOrder } from "./entity/openOrders";
 export function handleMarketExecuted(event: MarketExecuted): void {
     const params = event.params;
     const leverage = BigDecimal.fromString(params.t.leverage.toString()).div(WEI_E3_BD);
-    const amount = BigDecimal.fromString(params.t.collateralAmount.toString()).div(WEI_E18_BD);
+    const amount = BigDecimal.fromString(params.t.collateralAmount.toString()).div(
+        TOKEN_DECIMALS[params.t.collateralIndex]
+    );
     const volume = amount.times(leverage);
     const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
 
@@ -88,7 +90,7 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         });
     } else {
         const pnl = BigDecimal.fromString(params.amountSentToTrader.toString())
-            .div(WEI_E18_BD)
+            .div(TOKEN_DECIMALS[params.t.collateralIndex])
             .minus(trade.collateralAmount);
         addCloseTradeStats({
             collateralID: params.t.collateralIndex,
@@ -106,7 +108,9 @@ export function handleMarketExecuted(event: MarketExecuted): void {
 export function handleLimitExecuted(event: LimitExecuted): void {
     const params = event.params;
     const leverage = BigDecimal.fromString(params.t.leverage.toString()).div(WEI_E3_BD);
-    const amount = BigDecimal.fromString(params.t.collateralAmount.toString()).div(WEI_E18_BD);
+    const amount = BigDecimal.fromString(params.t.collateralAmount.toString()).div(
+        TOKEN_DECIMALS[params.t.collateralIndex]
+    );
     const volume = amount.times(leverage);
     const orderType = params.orderType;
     const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
@@ -164,7 +168,7 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         });
     } else {
         const pnl = BigDecimal.fromString(params.amountSentToTrader.toString())
-            .div(WEI_E18_BD)
+            .div(TOKEN_DECIMALS[params.t.collateralIndex])
             .minus(trade.collateralAmount);
         addCloseTradeStats({
             collateralID: params.t.collateralIndex,
@@ -203,7 +207,7 @@ export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): voi
 export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseExecuted): void {
     const params = event.params;
     const volume = BigDecimal.fromString(params.values.positionSizeCollateralDelta.toString()).div(
-        WEI_E18_BD
+        TOKEN_DECIMALS[params.collateralIndex]
     );
     const groupIndex = getGroupIndex(params.pairIndex);
 
@@ -231,7 +235,7 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
 export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseExecuted): void {
     const params = event.params;
     const volume = BigDecimal.fromString(params.values.positionSizeCollateralDelta.toString()).div(
-        WEI_E18_BD
+        TOKEN_DECIMALS[params.collateralIndex]
     );
     const groupIndex = getGroupIndex(params.pairIndex);
 
@@ -261,10 +265,12 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
     const initialCollateral = BigDecimal.fromString(
         params.values.positionSizeCollateralDelta.toString()
     )
-        .div(WEI_E18_BD)
+        .div(TOKEN_DECIMALS[params.collateralIndex])
         .div(leverage);
 
-    const pnl = BigDecimal.fromString(pnlWithFees.minus(totalFees).toString()).div(WEI_E18_BD);
+    const pnl = BigDecimal.fromString(pnlWithFees.minus(totalFees).toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
 
     addCloseTradeStats({
         collateralID: params.collateralIndex,
@@ -307,7 +313,9 @@ export function handleTradeTpUpdated(event: TradeTpUpdated): void {
 export function handleGovFeeCharged(event: GovFeeCharged): void {
     const params = event.params;
     const trader = event.params.trader.toHexString();
-    const govFee = BigDecimal.fromString(params.amountCollateral.toString()).div(WEI_E18_BD);
+    const govFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
 
     log.info("[handleGovFeeCharged] {}", [event.transaction.hash.toHexString()]);
     addGovFeeStats(trader, govFee, event.block.timestamp, params.collateralIndex);
@@ -318,7 +326,9 @@ export function handleGovFeeCharged(event: GovFeeCharged): void {
 export function handleReferralFeeCharged(event: ReferralFeeCharged): void {
     const params = event.params;
     const trader = event.params.trader.toHexString();
-    const referralFee = BigDecimal.fromString(params.amountCollateral.toString()).div(WEI_E18_BD);
+    const referralFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
 
     addReferralFeeStats(trader, referralFee, event.block.timestamp, params.collateralIndex);
 
@@ -328,7 +338,9 @@ export function handleReferralFeeCharged(event: ReferralFeeCharged): void {
 export function handleRewardsFeeCharged(event: RewardsFeeCharged): void {
     const params = event.params;
     const trader = event.params.trader.toHexString();
-    const rewardsFee = BigDecimal.fromString(params.amountCollateral.toString()).div(WEI_E18_BD);
+    const rewardsFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
 
     addStakerFeeStats(trader, rewardsFee, event.block.timestamp, params.collateralIndex);
     updateFeeBasedPoints(trader, rewardsFee, event.block.timestamp, params.collateralIndex);
@@ -337,7 +349,9 @@ export function handleRewardsFeeCharged(event: RewardsFeeCharged): void {
 export function handleBorrowingProviderFeeCharged(event: BorrowingProviderFeeCharged): void {
     const params = event.params;
     const trader = event.params.trader.toHexString();
-    const lpFee = BigDecimal.fromString(params.amountCollateral.toString()).div(WEI_E18_BD);
+    const lpFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
 
     addLpFeeStats(trader, lpFee, event.block.timestamp, params.collateralIndex);
     updateFeeBasedPoints(trader, lpFee, event.block.timestamp, params.collateralIndex);
@@ -345,7 +359,9 @@ export function handleBorrowingProviderFeeCharged(event: BorrowingProviderFeeCha
 
 export function handleBorrowingFeeCharged(event: BorrowingFeeCharged): void {
     const params = event.params;
-    const borrowingFee = BigDecimal.fromString(params.amountCollateral.toString()).div(WEI_E18_BD);
+    const borrowingFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
 
     addBorrowingFeeStats(
         params.trader.toHexString(),

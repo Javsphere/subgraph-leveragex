@@ -14,6 +14,7 @@ export const PAIRS_STATISTIC_ENTITY_TYPE = "PairsStatistic";
 
 export const WEI_E2_BD = BigDecimal.fromString("1e2");
 export const WEI_E3_BD = BigDecimal.fromString("1e3");
+export const WEI_E6_BD = BigDecimal.fromString("1e6");
 export const WEI_E8_BD = BigDecimal.fromString("1e8");
 export const WEI_E10_BD = BigDecimal.fromString("1e10");
 export const WEI_E18_BD = BigDecimal.fromString("1e18");
@@ -30,7 +31,17 @@ export const VOLUME_THRESHOLDS = [
     THRESHOLD_GROUP_3,
 ];
 
+class Networks {
+    BASE_SEPOLIA!: string;
+}
+
+export const NETWORKS: Networks = {
+    BASE_SEPOLIA: "base-sepolia",
+};
+
 export const PROTOCOL = "protocol";
+
+export const TOKEN_DECIMALS = getColDecimalsByNetwork();
 
 class EpochTypes {
     DAY!: string;
@@ -147,4 +158,22 @@ export function getDiamondContract(): LeverageDiamond {
 export function getGroupIndex(pairIndex: BigInt): BigInt {
     const pairsStorageContract = getDiamondContract();
     return pairsStorageContract.pairs(pairIndex).groupIndex;
+}
+
+function getColDecimalsByNetwork(): BigDecimal[] {
+    if (constants.networkName == NETWORKS.BASE_SEPOLIA) {
+        return [
+            WEI_E18_BD, // 0
+            WEI_E18_BD, //1
+            WEI_E18_BD, //2
+            WEI_E18_BD, //3
+            WEI_E18_BD, //4
+            WEI_E18_BD, //5
+            WEI_E18_BD, //6
+            WEI_E8_BD, //7
+            WEI_E6_BD, //8
+        ];
+    } else {
+        throw new Error("Unknown network");
+    }
 }

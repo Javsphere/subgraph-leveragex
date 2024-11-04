@@ -80,9 +80,9 @@ dataSources:
         - name: JavBorrowingProvider
           file: ./abis/JavBorrowingProvider.json
       eventHandlers:
-        - event: BuyLLP(indexed address,address,address,uint256,uint256)
+        - event: BuyLLP(indexed address,address,uint256,address,uint256,uint256)
           handler: handleBuyLLP
-        - event: SellLLP(indexed address,address,address,uint256,uint256)
+        - event: SellLLP(indexed address,address,address,uint256,uint256,uint256)
           handler: handleSellLLP
         - event: RewardDistributed(indexed address,indexed uint256,uint256,uint256)
           handler: handleRewardDistributed

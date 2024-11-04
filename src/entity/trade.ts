@@ -1,6 +1,6 @@
 import { Trade } from "../../generated/schema";
 import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
-import { WEI_E10_BD, WEI_E18_BD, WEI_E3_BD } from "../common";
+import { TOKEN_DECIMALS, WEI_E10_BD, WEI_E3_BD } from "../common";
 
 export function saveTrade(
     user: Address,
@@ -37,7 +37,7 @@ export function saveTrade(
     }
 
     trade.leverage = leverage.div(WEI_E3_BD);
-    trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
+    trade.collateralAmount = collateralAmount.div(TOKEN_DECIMALS[trade.collateralIndex]);
     trade.isOpen = isOpen;
     trade.tp = tp.div(WEI_E10_BD);
     trade.sl = sl.div(WEI_E10_BD);
@@ -65,7 +65,7 @@ export function updateTrade(
         trade.leverage = leverage.div(WEI_E3_BD);
     }
     if (collateralAmount) {
-        trade.collateralAmount = collateralAmount.div(WEI_E18_BD);
+        trade.collateralAmount = collateralAmount.div(TOKEN_DECIMALS[trade.collateralIndex]);
     }
     if (openPrice) {
         trade.openPrice = openPrice.div(WEI_E10_BD);

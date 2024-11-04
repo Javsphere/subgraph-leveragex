@@ -15,9 +15,10 @@ export function handleBuyLLP(event: BuyLLP): void {
         params.user,
         params.tokenIn,
         params.tokenOut,
+        params.tokenInID.toI32(),
         new BigDecimal(params.amountIn),
         new BigDecimal(params.amountOut),
-        "BUY",
+        false,
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
@@ -32,9 +33,10 @@ export function handleSellLLP(event: SellLLP): void {
         params.user,
         params.tokenIn,
         params.tokenOut,
+        params.tokenOutID.toI32(),
         new BigDecimal(params.amountIn),
         new BigDecimal(params.amountOut),
-        "SELL",
+        true,
         event.block.number,
         event.transaction.hash,
         event.block.timestamp

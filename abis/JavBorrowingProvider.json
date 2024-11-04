@@ -69,11 +69,6 @@
     },
     {
         "inputs": [],
-        "name": "MathOverflowedMulDiv",
-        "type": "error"
-    },
-    {
-        "inputs": [],
         "name": "NotEnoughAssets",
         "type": "error"
     },
@@ -112,27 +107,6 @@
     {
         "inputs": [],
         "name": "ReentrancyGuardReentrantCall",
-        "type": "error"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "currentAllowance",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "requestedDecrease",
-                "type": "uint256"
-            }
-        ],
-        "name": "SafeERC20FailedDecreaseAllowance",
         "type": "error"
     },
     {
@@ -267,6 +241,12 @@
                 "internalType": "address",
                 "name": "tokenIn",
                 "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokenInID",
+                "type": "uint256"
             },
             {
                 "indexed": false,
@@ -422,6 +402,12 @@
             {
                 "indexed": false,
                 "internalType": "uint256",
+                "name": "tokenOutID",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
                 "name": "amountIn",
                 "type": "uint256"
             },
@@ -446,6 +432,19 @@
             }
         ],
         "name": "SetAdminAddress",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "SetManagerAddress",
         "type": "event"
     },
     {
@@ -491,6 +490,43 @@
             }
         ],
         "name": "Unpaused",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "asset",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "priceFeed",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "targetWeightage",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            }
+        ],
+        "name": "UpdateToken",
         "type": "event"
     },
     {
@@ -782,6 +818,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "managerAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint8",
@@ -992,6 +1041,19 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "setManagerAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint256",
                 "name": "_inputToken",
                 "type": "uint256"
@@ -1109,6 +1171,30 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "tokensPrecision",
+        "outputs": [
+            {
+                "internalType": "uint128",
+                "name": "precision",
+                "type": "uint128"
+            },
+            {
+                "internalType": "uint128",
+                "name": "precisionDelta",
+                "type": "uint128"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "newOwner",
                 "type": "address"
             }
@@ -1147,6 +1233,46 @@
             }
         ],
         "name": "updatePnlHandler",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_tokenId",
+                "type": "uint256"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "priceFeed",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "targetWeightage",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct JavBorrowingProvider.TokenInfo",
+                "name": "_tokenInfo",
+                "type": "tuple"
+            }
+        ],
+        "name": "updateToken",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
