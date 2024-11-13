@@ -1,7 +1,7 @@
-import { Address, BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
-import { LeverageDiamond } from "../generated/LeverageDiamond/LeverageDiamond";
-import { constants } from "../generated/constants";
-import { Bytes } from "@graphprotocol/graph-ts/common/collections";
+import {Address, BigDecimal, BigInt, log} from "@graphprotocol/graph-ts";
+import {LeverageDiamond} from "../generated/LeverageDiamond/LeverageDiamond";
+import {constants} from "../generated/constants";
+import {Bytes} from "@graphprotocol/graph-ts/common/collections";
 
 export const ZERO_BI = BigInt.zero();
 export const ZERO_BD = BigDecimal.fromString("0");
@@ -33,10 +33,12 @@ export const VOLUME_THRESHOLDS = [
 
 class Networks {
     BASE_SEPOLIA!: string;
+    BASE!: string;
 }
 
 export const NETWORKS: Networks = {
     BASE_SEPOLIA: "base-sepolia",
+    BASE: "base",
 };
 
 export const PROTOCOL = "protocol";
@@ -172,6 +174,13 @@ function getColDecimalsByNetwork(): BigDecimal[] {
             WEI_E18_BD, //6
             WEI_E8_BD, //7
             WEI_E6_BD, //8
+        ];
+    }
+    if (constants.networkName == NETWORKS.BASE) {
+        return [
+            WEI_E18_BD, // 0 (weth)
+            WEI_E8_BD, //1 (cbBTC)
+            WEI_E6_BD, //2 (USDC)
         ];
     } else {
         throw new Error("Unknown network");

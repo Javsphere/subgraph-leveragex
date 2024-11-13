@@ -1,12 +1,12 @@
 {
-    "mainnet": {
+    "base": {
         "LeverageDiamond": {
-            "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 0
+            "address": "0xBF35e4273db5692777EA475728fDbBa092FFa1B3",
+            "startBlock": 22354208
         },
         "JavBorrowingProvider": {
-            "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 0
+            "address": "0xFd916d70eB2d0E0E1C17A6a68a7FBEdE3106b852",
+            "startBlock": 22354208
         }
     }
 }

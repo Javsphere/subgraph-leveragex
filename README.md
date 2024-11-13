@@ -1,3 +1,7 @@
 # subgraph-leveragex
 
-Current graph version - v0.1.29
+### Current graph versions:
+#### Base
+v1.0.0
+#### Sepolia base
+v0.1.29
