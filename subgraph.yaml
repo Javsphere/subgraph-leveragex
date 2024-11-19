@@ -5,11 +5,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: LeverageDiamond
-    network: base
+    network: base-sepolia
     source:
       abi: LeverageDiamond
-      address: "0xBF35e4273db5692777EA475728fDbBa092FFa1B3"
-      startBlock: 22354208
+      address: "0xDED8c59c45D8e0f45D8C32f6F6E0A4a2d582e59d"
+      startBlock: 18130356
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -64,11 +64,11 @@ dataSources:
           handler: handleOpenOrderPlaced
   - kind: ethereum/contract
     name: JavBorrowingProvider
-    network: base
+    network: base-sepolia
     source:
       abi: JavBorrowingProvider
-      address: "0xFd916d70eB2d0E0E1C17A6a68a7FBEdE3106b852"
-      startBlock: 22354208
+      address: "0x92c1130D070C6bFaF5B3A3Fc9bC5E8DAA6b05324"
+      startBlock: 17306238
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
