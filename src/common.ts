@@ -168,12 +168,6 @@ function getColDecimalsByNetwork(): BigDecimal[] {
             WEI_E18_BD, // 0
             WEI_E18_BD, //1
             WEI_E18_BD, //2
-            WEI_E18_BD, //3
-            WEI_E18_BD, //4
-            WEI_E18_BD, //5
-            WEI_E18_BD, //6
-            WEI_E8_BD, //7
-            WEI_E6_BD, //8
         ];
     }
     if (constants.networkName == NETWORKS.BASE) {

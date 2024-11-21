@@ -67,8 +67,8 @@ dataSources:
     network: base-sepolia
     source:
       abi: JavBorrowingProvider
-      address: "0x92c1130D070C6bFaF5B3A3Fc9bC5E8DAA6b05324"
-      startBlock: 17306238
+      address: "0x0CB952f45b5bDE5aA0e93862707bf34F2EE1E452"
+      startBlock: 18207646
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
