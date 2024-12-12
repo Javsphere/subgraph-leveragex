@@ -5,7 +5,7 @@ import {
     EPOCH_TYPE,
     ONE_BD,
     PROTOCOL,
-    VOLUME_THRESHOLDS,
+    VOLUME_THRESHOLD,
     WEI_E2_BD,
     ZERO_BD,
 } from "../common";
@@ -223,9 +223,8 @@ export function updateDiversityPoints(
     volume: BigDecimal
 ): void {
     let groupId = groupNumber;
-    let volumeThreshold = VOLUME_THRESHOLDS[groupId];
 
-    if (volume.ge(volumeThreshold) && userWeeklyPoints.groupsTraded[groupId] == ZERO_BD) {
+    if (volume.ge(VOLUME_THRESHOLD) && userWeeklyPoints.groupsTraded[groupId] == ZERO_BD) {
         userDailyPoints.groupsTraded[groupId] = ONE_BD;
         userWeeklyPoints.groupsTraded[groupId] = ONE_BD;
         userMonthlyPoints.groupsTraded[groupId] = ONE_BD;

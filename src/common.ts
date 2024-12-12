@@ -1,7 +1,7 @@
-import {Address, BigDecimal, BigInt, log} from "@graphprotocol/graph-ts";
-import {LeverageDiamond} from "../generated/LeverageDiamond/LeverageDiamond";
-import {constants} from "../generated/constants";
-import {Bytes} from "@graphprotocol/graph-ts/common/collections";
+import { Address, BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
+import { LeverageDiamond } from "../generated/LeverageDiamond/LeverageDiamond";
+import { constants } from "../generated/constants";
+import { Bytes } from "@graphprotocol/graph-ts/common/collections";
 
 export const ZERO_BI = BigInt.zero();
 export const ZERO_BD = BigDecimal.fromString("0");
@@ -20,16 +20,7 @@ export const WEI_E10_BD = BigDecimal.fromString("1e10");
 export const WEI_E18_BD = BigDecimal.fromString("1e18");
 
 //DIVERSITY POINTS THRESHOLDS BY GROUP
-export const THRESHOLD_GROUP_0 = BigDecimal.fromString("100");
-export const THRESHOLD_GROUP_1 = BigDecimal.fromString("250");
-export const THRESHOLD_GROUP_2 = BigDecimal.fromString("300");
-export const THRESHOLD_GROUP_3 = BigDecimal.fromString("500");
-export const VOLUME_THRESHOLDS = [
-    THRESHOLD_GROUP_0,
-    THRESHOLD_GROUP_1,
-    THRESHOLD_GROUP_2,
-    THRESHOLD_GROUP_3,
-];
+export const VOLUME_THRESHOLD = BigDecimal.fromString("100");
 
 class Networks {
     BASE_SEPOLIA!: string;
