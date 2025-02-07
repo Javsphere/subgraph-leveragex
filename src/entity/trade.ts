@@ -2,6 +2,11 @@ import { Trade } from "../../generated/schema";
 import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { TOKEN_DECIMALS, WEI_E10_BD, WEI_E3_BD } from "../common";
 
+export function getTrade(user: Address, index: BigInt): Trade | null {
+    const tradeID = `${user.toHexString()}-${index}`;
+    return Trade.load(tradeID);
+}
+
 export function saveTrade(
     user: Address,
     index: BigInt,

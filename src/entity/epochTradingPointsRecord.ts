@@ -519,7 +519,15 @@ export function createOrLoadEpochTradingPointsRecord(
         epochTradingPointsRecord.totalTradedAmount = BigDecimal.fromString("0");
         epochTradingPointsRecord.pnl = BigDecimal.fromString("0");
         epochTradingPointsRecord.pnlPercentage = BigDecimal.fromString("0");
-        epochTradingPointsRecord.groupsTraded = [ZERO_BD, ZERO_BD, ZERO_BD, ZERO_BD, ZERO_BD, ZERO_BD, ZERO_BD];
+        epochTradingPointsRecord.groupsTraded = [
+            ZERO_BD,
+            ZERO_BD,
+            ZERO_BD,
+            ZERO_BD,
+            ZERO_BD,
+            ZERO_BD,
+            ZERO_BD,
+        ];
         epochTradingPointsRecord.loyaltyPoints = BigDecimal.fromString("0");
         epochTradingPointsRecord.diversityPoints = BigDecimal.fromString("0");
         epochTradingPointsRecord.absSkillPoints = BigDecimal.fromString("0");

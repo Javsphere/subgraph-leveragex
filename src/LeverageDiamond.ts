@@ -15,12 +15,12 @@ import {
     TradeSlUpdated,
     TradeTpUpdated,
 } from "../generated/LeverageDiamond/LeverageDiamond";
-import { saveTrade, updateTrade } from "./entity/trade";
+import { getTrade, saveTrade, updateTrade } from "./entity/trade";
 import { saveOrderHistory } from "./entity/ordersHistory";
 import { BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
 import { savePairsStatistic } from "./entity/pairsStatistics";
 import { updateFeeBasedPoints } from "./entity/epochTradingPointsRecord";
-import { getGroupIndex, TOKEN_DECIMALS, WEI_E3_BD } from "./common";
+import { getGroupIndex, TOKEN_DECIMALS, WEI_E3_BD, ZERO_BD } from "./common";
 import {
     addBorrowingFeeStats,
     addCloseTradeStats,
@@ -62,8 +62,10 @@ export function handleMarketExecuted(event: MarketExecuted): void {
     saveOrderHistory(
         trade,
         params.open,
+        BigDecimal.fromString(params.t.leverage.toString()),
+        BigDecimal.fromString(params.t.collateralAmount.toString()),
         new BigDecimal(params.priceImpactP),
-        new BigDecimal(params.amountSentToTrader),
+        params.open ? null : new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.price),
         params.open ? 100 : 102,
@@ -140,6 +142,8 @@ export function handleLimitExecuted(event: LimitExecuted): void {
     saveOrderHistory(
         trade,
         isOpen,
+        BigDecimal.fromString(params.t.leverage.toString()),
+        BigDecimal.fromString(params.t.collateralAmount.toString()),
         new BigDecimal(params.priceImpactP),
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
@@ -193,6 +197,16 @@ export function handleTradePositionUpdated(event: TradePositionUpdated): void {}
 
 export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): void {
     const params = event.params;
+
+    const trade = getTrade(params.trader, params.index);
+    if (!trade) {
+        log.warning("handleLeverageUpdateExecuted - Trade not found  {}/{}", [
+            params.trader.toHexString(),
+            params.index.toString(),
+        ]);
+        return;
+    }
+
     updateTrade(
         params.trader,
         params.index,
@@ -201,6 +215,21 @@ export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): voi
         null,
         null,
         null
+    );
+
+    saveOrderHistory(
+        trade,
+        true,
+        new BigDecimal(params.values.newLeverage),
+        new BigDecimal(params.values.newCollateralAmount),
+        ZERO_BD,
+        null,
+        ZERO_BD,
+        new BigDecimal(params.marketPrice),
+        7, // UPDATE_LEVERAGE
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 }
 
@@ -211,6 +240,15 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
     );
     const groupIndex = getGroupIndex(params.pairIndex);
 
+    const trade = getTrade(params.trader, params.index);
+    if (!trade) {
+        log.warning("handlePositionSizeIncreaseExecuted - Trade not found  {}/{}", [
+            params.trader.toHexString(),
+            params.index.toString(),
+        ]);
+        return;
+    }
+
     updateTrade(
         params.trader,
         params.index,
@@ -219,6 +257,21 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
         new BigDecimal(params.values.newOpenPrice),
         null,
         null
+    );
+
+    saveOrderHistory(
+        trade,
+        true,
+        new BigDecimal(params.values.newLeverage),
+        new BigDecimal(params.values.newCollateralAmount),
+        ZERO_BD,
+        null,
+        ZERO_BD,
+        new BigDecimal(params.marketPrice),
+        103, // UPDATE_POSITION_SIZE
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 
     addOpenTradeStats({
@@ -239,6 +292,14 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
     );
     const groupIndex = getGroupIndex(params.pairIndex);
 
+    const trade = getTrade(params.trader, params.index);
+    if (!trade) {
+        log.warning("handlePositionSizeDecreaseExecuted - Trade not found  {}/{}", [
+            params.trader.toHexString(),
+            params.index.toString(),
+        ]);
+        return;
+    }
     updateTrade(
         params.trader,
         params.index,
@@ -247,6 +308,21 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
         null,
         null,
         null
+    );
+
+    saveOrderHistory(
+        trade,
+        true,
+        BigDecimal.fromString(params.values.newLeverage.toString()),
+        new BigDecimal(params.values.newCollateralAmount),
+        ZERO_BD,
+        null,
+        ZERO_BD,
+        new BigDecimal(params.marketPrice),
+        103, // UPDATE_POSITION_SIZE
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 
     const totalFees = params.values.gnsStakingFeeCollateral
@@ -286,6 +362,15 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
 
 export function handleTradeSlUpdated(event: TradeSlUpdated): void {
     const params = event.params;
+
+    const trade = getTrade(params.tradeId.user, params.tradeId.index);
+    if (!trade) {
+        log.warning("handleTradeSlUpdated - Trade not found  {}/{}", [
+            params.tradeId.user.toHexString(),
+            params.tradeId.index.toString(),
+        ]);
+        return;
+    }
     updateTrade(
         params.tradeId.user,
         params.tradeId.index,
@@ -295,10 +380,33 @@ export function handleTradeSlUpdated(event: TradeSlUpdated): void {
         null,
         BigDecimal.fromString(params.newSl.toString())
     );
+
+    saveOrderHistory(
+        trade,
+        true,
+        trade.leverage,
+        trade.collateralAmount,
+        ZERO_BD,
+        null,
+        ZERO_BD,
+        ZERO_BD,
+        104, // UPDATE_SL
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
 }
 
 export function handleTradeTpUpdated(event: TradeTpUpdated): void {
     const params = event.params;
+    const trade = getTrade(params.tradeId.user, params.tradeId.index);
+    if (!trade) {
+        log.warning("handleTradeTpUpdated - Trade not found  {}/{}", [
+            params.tradeId.user.toHexString(),
+            params.tradeId.index.toString(),
+        ]);
+        return;
+    }
     updateTrade(
         params.tradeId.user,
         params.tradeId.index,
@@ -307,6 +415,21 @@ export function handleTradeTpUpdated(event: TradeTpUpdated): void {
         null,
         BigDecimal.fromString(params.newTp.toString()),
         null
+    );
+
+    saveOrderHistory(
+        trade,
+        true,
+        trade.leverage,
+        trade.collateralAmount,
+        ZERO_BD,
+        null,
+        ZERO_BD,
+        ZERO_BD,
+        105, // UPDATE_TP
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 }
 
@@ -317,7 +440,6 @@ export function handleGovFeeCharged(event: GovFeeCharged): void {
         TOKEN_DECIMALS[params.collateralIndex]
     );
 
-    log.info("[handleGovFeeCharged] {}", [event.transaction.hash.toHexString()]);
     addGovFeeStats(trader, govFee, event.block.timestamp, params.collateralIndex);
 
     updateFeeBasedPoints(trader, govFee, event.block.timestamp, params.collateralIndex);

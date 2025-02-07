@@ -23,6 +23,10 @@ enum OrderType {
     USER_OPEN
     USER_CANCEL
     USER_CLOSE
+    UPDATE_POSITION_SIZE
+    UPDATE_SL
+    UPDATE_TP
+    UNDEFINED
 }
 
 enum EpochType {
@@ -56,6 +60,8 @@ type OrdersHistory @entity {
     id: ID!
     trade: Trade!
     open: Boolean!
+    leverage: BigDecimal!
+    collateralAmount: BigDecimal!
     priceImpactP: BigDecimal!
     pnl: BigDecimal!
     pnlPercentage: BigDecimal!
