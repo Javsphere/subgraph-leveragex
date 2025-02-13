@@ -384,8 +384,8 @@ export function handleTradeSlUpdated(event: TradeSlUpdated): void {
     saveOrderHistory(
         trade,
         true,
-        trade.leverage,
-        trade.collateralAmount,
+        trade.leverage.times(WEI_E3_BD),
+        trade.collateralAmount.times(TOKEN_DECIMALS[trade.collateralIndex]),
         ZERO_BD,
         null,
         ZERO_BD,
@@ -420,8 +420,8 @@ export function handleTradeTpUpdated(event: TradeTpUpdated): void {
     saveOrderHistory(
         trade,
         true,
-        trade.leverage,
-        trade.collateralAmount,
+        trade.leverage.times(WEI_E3_BD),
+        trade.collateralAmount.times(TOKEN_DECIMALS[trade.collateralIndex]),
         ZERO_BD,
         null,
         ZERO_BD,
