@@ -273,16 +273,6 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
         event.transaction.hash,
         event.block.timestamp
     );
-
-    addOpenTradeStats({
-        collateralID: params.collateralIndex,
-        address: params.trader.toHexString(),
-        pairIndex: params.pairIndex.toI32(),
-        groupIndex: groupIndex.toI32(),
-        positionSize: volume,
-        leverage: BigDecimal.fromString(params.values.newLeverage.toString()).div(WEI_E3_BD),
-        timestamp: event.block.timestamp,
-    });
 }
 
 export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseExecuted): void {
@@ -347,17 +337,6 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
     const pnl = BigDecimal.fromString(pnlWithFees.minus(totalFees).toString()).div(
         TOKEN_DECIMALS[params.collateralIndex]
     );
-
-    addCloseTradeStats({
-        collateralID: params.collateralIndex,
-        address: params.trader.toHexString(),
-        pairIndex: params.pairIndex.toI32(),
-        groupIndex: groupIndex.toI32(),
-        positionSize: volume,
-        pnl: pnl,
-        tradedAmount: initialCollateral,
-        timestamp: event.block.timestamp,
-    });
 }
 
 export function handleTradeSlUpdated(event: TradeSlUpdated): void {
