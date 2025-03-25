@@ -46,6 +46,10 @@ dataSources:
             address,indexed
             uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,int256,uint256,uint256,uint256,int256,int256,uint120,uint24))
           handler: handlePositionSizeDecreaseExecuted
+        - event: PositionSizeDecreaseExecuted((address,uint32),indexed uint8,indexed
+            address,indexed
+            uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,int256,uint256,uint256,int256,int256,uint120,uint24))
+          handler: handlePositionSizeDecreaseExecuted
         - event: TradeSlUpdated((address,uint32),uint64)
           handler: handleTradeSlUpdated
         - event: TradeTpUpdated((address,uint32),uint64)

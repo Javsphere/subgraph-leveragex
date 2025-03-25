@@ -277,10 +277,6 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
 
 export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseExecuted): void {
     const params = event.params;
-    const volume = BigDecimal.fromString(params.values.positionSizeCollateralDelta.toString()).div(
-        TOKEN_DECIMALS[params.collateralIndex]
-    );
-    const groupIndex = getGroupIndex(params.pairIndex);
 
     const trade = getTrade(params.trader, params.index);
     if (!trade) {
@@ -313,29 +309,6 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
-    );
-
-    const totalFees = params.values.gnsStakingFeeCollateral
-        .plus(params.values.vaultFeeCollateral)
-        .plus(params.values.borrowingFeeCollateral);
-    const pnlWithFees = params.values.existingPnlCollateral
-        .times(params.values.positionSizeCollateralDelta)
-        .div(params.values.existingPositionSizeCollateral);
-
-    const levDelta =
-        params.leverageDelta != BigInt.fromI32(0)
-            ? params.leverageDelta
-            : BigInt.fromI32(params.values.newLeverage);
-    const leverage_raw = BigDecimal.fromString(levDelta.toString());
-    const leverage = leverage_raw.div(WEI_E3_BD);
-    const initialCollateral = BigDecimal.fromString(
-        params.values.positionSizeCollateralDelta.toString()
-    )
-        .div(TOKEN_DECIMALS[params.collateralIndex])
-        .div(leverage);
-
-    const pnl = BigDecimal.fromString(pnlWithFees.minus(totalFees).toString()).div(
-        TOKEN_DECIMALS[params.collateralIndex]
     );
 }
 
