@@ -156,9 +156,10 @@ export function getGroupIndex(pairIndex: BigInt): BigInt {
 function getColDecimalsByNetwork(): BigDecimal[] {
     if (constants.networkName == NETWORKS.BASE_SEPOLIA) {
         return [
-            WEI_E18_BD, // 0
-            WEI_E18_BD, //1
-            WEI_E18_BD, //2
+            WEI_E18_BD, // 0 (weth)
+            WEI_E18_BD, //1 (cbBTC)
+            WEI_E18_BD, //2 (USDC)
+            WEI_E18_BD, //3 (Jav)
         ];
     }
     if (constants.networkName == NETWORKS.BASE) {
@@ -166,6 +167,7 @@ function getColDecimalsByNetwork(): BigDecimal[] {
             WEI_E18_BD, // 0 (weth)
             WEI_E8_BD, //1 (cbBTC)
             WEI_E6_BD, //2 (USDC)
+            WEI_E18_BD, //3 (Jav)
         ];
     } else {
         throw new Error("Unknown network");
