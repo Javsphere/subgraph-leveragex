@@ -7,6 +7,10 @@
         "JavBorrowingProvider": {
             "address": "0x0CB952f45b5bDE5aA0e93862707bf34F2EE1E452",
             "startBlock": 18207646
+        },
+        "XVault": {
+            "address": "0x83f4318cA5345B997f041EFC8022bC2AE98E3D29",
+            "startBlock": 23615141
         }
     }
 }

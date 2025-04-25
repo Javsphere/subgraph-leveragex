@@ -9,6 +9,11 @@ enum JLPActionType {
     SELL
 }
 
+enum XVaultActionType {
+    DEPOSIT
+    WITHDRAW
+}
+
 enum OrderType {
     MARKET_OPEN
     MARKET_CLOSE
@@ -95,6 +100,32 @@ type BorrowingProviderHistory @entity {
     amountIn: BigDecimal!
     amountOut: BigDecimal!
     type: JLPActionType!
+
+    block: BigInt!
+    tx: Bytes!
+    date: BigInt!
+}
+
+type XVaultHistory @entity {
+    id: Bytes!
+    ownerAddress: Bytes!
+    receiverAddress: Bytes!
+    assetsAmount: BigDecimal!
+    sharesAmount: BigDecimal!
+    type: XVaultActionType!
+
+    block: BigInt!
+    tx: Bytes!
+    date: BigInt!
+}
+
+type XVaultWithdrawRequest @entity {
+    id: Bytes!
+    senderAddress: Bytes!
+    ownerAddress: Bytes!
+    shares: BigDecimal!
+    currentEpoch: BigInt!
+    unlockEpoch: BigInt!
 
     block: BigInt!
     tx: Bytes!
