@@ -1,18 +1,36 @@
 import { BigDecimal } from "@graphprotocol/graph-ts";
 import { saveXVaultHistory } from "./entity/xVaultHistory";
-import { saveXVaultWithdrawRequest } from "./entity/xVaultWithdrawRequests";
-import { Deposit, Withdraw, WithdrawRequested } from "../generated/XVault/XVault";
+import { saveXVaultRequest } from "./entity/xVaultRequests";
+import { Deposit, Withdraw, WithdrawCanceled, WithdrawRequested } from "../generated/XVault/XVault";
 
 export function handleXVaultWithdrawRequest(event: WithdrawRequested): void {
     const params = event.params;
 
-    saveXVaultWithdrawRequest(
+    saveXVaultRequest(
         event.transaction.hash.concatI32(event.logIndex.toI32()),
         params.sender,
         params.owner,
         new BigDecimal(params.shares),
         params.currEpoch,
         params.unlockEpoch,
+        true,
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+}
+
+export function handleXVaultCancelWithdrawRequest(event: WithdrawCanceled): void {
+    const params = event.params;
+
+    saveXVaultRequest(
+        event.transaction.hash.concatI32(event.logIndex.toI32()),
+        params.sender,
+        params.owner,
+        new BigDecimal(params.shares),
+        params.currEpoch,
+        params.unlockEpoch,
+        false,
         event.block.number,
         event.transaction.hash,
         event.block.timestamp

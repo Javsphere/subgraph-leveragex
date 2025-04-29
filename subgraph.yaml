@@ -27,8 +27,7 @@ dataSources:
       eventHandlers:
         - event: MarketExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256)
           handler: handleMarketExecuted
-        - event:
-            LimitExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
+        - event: LimitExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
             address,uint8,uint256,uint256,int256,uint256,uint256,bool)
           handler: handleLimitExecuted
         - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
@@ -102,8 +101,8 @@ dataSources:
     network: base
     source:
       abi: XVault
-      address: "0xFd916d70eB2d0E0E1C17A6a68a7FBEdE3106b851"
-      startBlock: 22354207
+      address: "0x96aF2003ab259a56104d639eb6ed9EACe54B1142"
+      startBlock: 29564560
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -122,3 +121,6 @@ dataSources:
         - event: WithdrawRequested(indexed address,indexed address,uint256,uint256,indexed
             uint256)
           handler: handleXVaultWithdrawRequest
+        - event: WithdrawCanceled(indexed address,indexed address,uint256,uint256,indexed
+            uint256)
+          handler: handleXVaultCancelWithdrawRequest
