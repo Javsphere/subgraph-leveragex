@@ -26,6 +26,16 @@
         "type": "error"
     },
     {
+        "inputs": [],
+        "name": "AlreadyExists",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "DoesntExist",
+        "type": "error"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -233,7 +243,22 @@
     },
     {
         "inputs": [],
+        "name": "InvalidAddresses",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidAmount",
+        "type": "error"
+    },
+    {
+        "inputs": [],
         "name": "InvalidInitialization",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidInputLength",
         "type": "error"
     },
     {
@@ -258,7 +283,17 @@
     },
     {
         "inputs": [],
+        "name": "OnlyAgreedToTerms",
+        "type": "error"
+    },
+    {
+        "inputs": [],
         "name": "OnlyTradingPnlHandler",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "Overflow",
         "type": "error"
     },
     {
@@ -327,12 +362,37 @@
     },
     {
         "inputs": [],
+        "name": "WrongIndex",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "WrongLength",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "WrongParams",
+        "type": "error"
+    },
+    {
+        "inputs": [],
         "name": "WrongValue",
         "type": "error"
     },
     {
         "inputs": [],
         "name": "WrongValues",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ZeroAddress",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ZeroValue",
         "type": "error"
     },
     {
@@ -637,6 +697,57 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "uint32[]",
+                "name": "baseFees",
+                "type": "uint32[]"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32[]",
+                "name": "usdThresholds",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "SetBuyConfiguration",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint32[]",
+                "name": "javThresholds",
+                "type": "uint32[]"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32[]",
+                "name": "reductionFactors",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "SetJavAmountConfiguration",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "SetJavInfoAggregator",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "_address",
@@ -644,6 +755,32 @@
             }
         ],
         "name": "SetManagerAddress",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint32[]",
+                "name": "sellFees",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "SetSellFees",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "SetTermsAndConditionsAddress",
         "type": "event"
     },
     {
@@ -707,6 +844,19 @@
                 "type": "uint256"
             }
         ],
+        "name": "UpdateEpochDuration",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "newValue",
+                "type": "uint256"
+            }
+        ],
         "name": "UpdateWithdrawEpochsLock",
         "type": "event"
     },
@@ -723,6 +873,7 @@
         "name": "Upgraded",
         "type": "event"
     },
+
     {
         "anonymous": false,
         "inputs": [
@@ -754,6 +905,12 @@
                 "indexed": false,
                 "internalType": "uint256",
                 "name": "shares",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "unlockEpoch",
                 "type": "uint256"
             }
         ],
@@ -977,9 +1134,23 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "shares",
+                "name": "",
                 "type": "uint256"
-            },
+            }
+        ],
+        "name": "baseFees",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
             {
                 "internalType": "address",
                 "name": "owner",
@@ -998,6 +1169,19 @@
     },
     {
         "inputs": [],
+        "name": "clearEpochNumber",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "collateralConfig",
         "outputs": [
             {
@@ -1009,19 +1193,6 @@
                 "internalType": "uint128",
                 "name": "precisionDelta",
                 "type": "uint128"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "collateralizationP",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -1173,6 +1344,30 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "assets",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "receiver",
+                "type": "address"
+            }
+        ],
+        "name": "fillVault",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "getCurrentEpoch",
         "outputs": [
@@ -1254,6 +1449,38 @@
     },
     {
         "inputs": [],
+        "name": "javInfoAggregator",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "javThresholds",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "lastDailyAccPnlDeltaReset",
         "outputs": [
             {
@@ -1268,6 +1495,19 @@
     {
         "inputs": [],
         "name": "lastMaxSupplyUpdate",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "lastUpdateEpoch",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -1662,10 +1902,48 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "reductionFactors",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "sellFees",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -1707,12 +1985,87 @@
     {
         "inputs": [
             {
+                "internalType": "uint32[]",
+                "name": "_baseFees",
+                "type": "uint32[]"
+            },
+            {
+                "internalType": "uint32[]",
+                "name": "_usdThresholds",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "setBuyConfiguration",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint32[]",
+                "name": "_javThresholds",
+                "type": "uint32[]"
+            },
+            {
+                "internalType": "uint32[]",
+                "name": "_reductionFactors",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "setJavAmountConfiguration",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_javInfoAggregator",
+                "type": "address"
+            }
+        ],
+        "name": "setJavInfoAggregator",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "_address",
                 "type": "address"
             }
         ],
         "name": "setManagerAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint32[]",
+                "name": "_sellFees",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "setSellFees",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_termsAndConditionsAddress",
+                "type": "address"
+            }
+        ],
+        "name": "setTermsAndConditionsAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1738,6 +2091,19 @@
                 "internalType": "string",
                 "name": "",
                 "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "termsAndConditionsAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -1944,6 +2310,19 @@
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "_newValue",
+                "type": "uint256"
+            }
+        ],
+        "name": "updateEpochDuration",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
                 "name": "newValue",
                 "type": "uint256"
             }
@@ -2001,7 +2380,26 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "assets",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "usdThresholds",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "epoch",
                 "type": "uint256"
             },
             {

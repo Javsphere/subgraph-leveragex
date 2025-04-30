@@ -118,6 +118,7 @@ type XVaultHistory @entity {
     assetsAmount: BigDecimal!
     sharesAmount: BigDecimal!
     type: XVaultActionType!
+    unlockEpoch: BigInt!
 
     block: BigInt!
     tx: Bytes!

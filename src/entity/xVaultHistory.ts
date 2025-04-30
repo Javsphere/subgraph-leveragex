@@ -9,6 +9,7 @@ export function saveXVaultHistory(
     assetsAmount: BigDecimal,
     sharesAmount: BigDecimal,
     isDeposit: boolean,
+    unlockEpoch: BigInt,
     block: BigInt,
     tx: Bytes,
     date: BigInt
@@ -21,6 +22,7 @@ export function saveXVaultHistory(
     xVaultHistory.sharesAmount = sharesAmount.div(WEI_E18_BD);
 
     xVaultHistory.type = isDeposit ? "DEPOSIT" : "WITHDRAW";
+    xVaultHistory.unlockEpoch = unlockEpoch;
 
     xVaultHistory.block = block;
     xVaultHistory.tx = tx;

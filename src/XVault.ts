@@ -1,4 +1,4 @@
-import { BigDecimal } from "@graphprotocol/graph-ts";
+import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 import { saveXVaultHistory } from "./entity/xVaultHistory";
 import { saveXVaultRequest } from "./entity/xVaultRequests";
 import { Deposit, Withdraw, WithdrawCanceled, WithdrawRequested } from "../generated/XVault/XVault";
@@ -47,6 +47,7 @@ export function handleXVaultDeposit(event: Deposit): void {
         new BigDecimal(params.assets),
         new BigDecimal(params.shares),
         true,
+        BigInt.fromI32(0),
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
@@ -63,6 +64,7 @@ export function handleXVaultWithdraw(event: Withdraw): void {
         new BigDecimal(params.assets),
         new BigDecimal(params.shares),
         false,
+        params.unlockEpoch,
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
