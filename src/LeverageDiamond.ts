@@ -8,7 +8,9 @@ import {
     OpenLimitCanceled,
     OpenOrderPlaced,
     PositionSizeDecreaseExecuted,
+    PositionSizeDecreaseExecuted1,
     PositionSizeIncreaseExecuted,
+    PositionSizeIncreaseExecuted1,
     ReferralFeeCharged,
     RewardsFeeCharged,
     TradePositionUpdated,
@@ -235,10 +237,6 @@ export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): voi
 
 export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseExecuted): void {
     const params = event.params;
-    const volume = BigDecimal.fromString(params.values.positionSizeCollateralDelta.toString()).div(
-        TOKEN_DECIMALS[params.collateralIndex]
-    );
-    const groupIndex = getGroupIndex(params.pairIndex);
 
     const trade = getTrade(params.trader, params.index);
     if (!trade) {
@@ -275,7 +273,45 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
     );
 }
 
-export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseExecuted): void {
+export function handlePositionSizeIncreaseExecuted1(event: PositionSizeIncreaseExecuted1): void {
+    const params = event.params;
+
+    const trade = getTrade(params.trader, params.index);
+    if (!trade) {
+        log.warning("handlePositionSizeIncreaseExecuted - Trade not found  {}/{}", [
+            params.trader.toHexString(),
+            params.index.toString(),
+        ]);
+        return;
+    }
+
+    updateTrade(
+        params.trader,
+        params.index,
+        new BigDecimal(params.values.newLeverage),
+        new BigDecimal(params.values.newCollateralAmount),
+        new BigDecimal(params.values.newOpenPrice),
+        null,
+        null
+    );
+
+    saveOrderHistory(
+        trade,
+        true,
+        new BigDecimal(params.values.newLeverage),
+        new BigDecimal(params.values.newCollateralAmount),
+        ZERO_BD,
+        null,
+        new BigDecimal(params.collateralPriceUsd),
+        new BigDecimal(params.marketPrice),
+        103, // UPDATE_POSITION_SIZE
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+}
+
+export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseExecuted1): void {
     const params = event.params;
 
     const trade = getTrade(params.trader, params.index);
@@ -304,6 +340,43 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
         ZERO_BD,
         null,
         ZERO_BD,
+        new BigDecimal(params.marketPrice),
+        103, // UPDATE_POSITION_SIZE
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+}
+
+export function handlePositionSizeDecreaseExecuted1(event: PositionSizeDecreaseExecuted): void {
+    const params = event.params;
+
+    const trade = getTrade(params.trader, params.index);
+    if (!trade) {
+        log.warning("handlePositionSizeDecreaseExecuted - Trade not found  {}/{}", [
+            params.trader.toHexString(),
+            params.index.toString(),
+        ]);
+        return;
+    }
+    updateTrade(
+        params.trader,
+        params.index,
+        BigDecimal.fromString(params.values.newLeverage.toString()),
+        new BigDecimal(params.values.newCollateralAmount),
+        null,
+        null,
+        null
+    );
+
+    saveOrderHistory(
+        trade,
+        true,
+        BigDecimal.fromString(params.values.newLeverage.toString()),
+        new BigDecimal(params.values.newCollateralAmount),
+        ZERO_BD,
+        null,
+        new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.marketPrice),
         103, // UPDATE_POSITION_SIZE
         event.block.number,

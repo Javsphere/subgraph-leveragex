@@ -9697,6 +9697,12 @@
             {
                 "indexed": false,
                 "internalType": "uint256",
+                "name": "collateralPriceUsd",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
                 "name": "collateralDelta",
                 "type": "uint256"
             },
@@ -9724,6 +9730,11 @@
                         "type": "uint256"
                     },
                     {
+                        "internalType": "uint256",
+                        "name": "priceAfterImpact",
+                        "type": "uint256"
+                    },
+                    {
                         "internalType": "int256",
                         "name": "existingPnlCollateral",
                         "type": "int256"
@@ -9735,12 +9746,7 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "vaultFeeCollateral",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gnsStakingFeeCollateral",
+                        "name": "closingFeeCollateral",
                         "type": "uint256"
                     },
                     {
@@ -9854,11 +9860,6 @@
                         "type": "uint256"
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "priceAfterImpact",
-                        "type": "uint256"
-                    },
-                    {
                         "internalType": "int256",
                         "name": "existingPnlCollateral",
                         "type": "int256"
@@ -9870,7 +9871,12 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "closingFeeCollateral",
+                        "name": "vaultFeeCollateral",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "gnsStakingFeeCollateral",
                         "type": "uint256"
                     },
                     {
@@ -10036,142 +10042,6 @@
             }
         ],
         "name": "PositionSizeIncreaseExecuted",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint32",
-                        "name": "index",
-                        "type": "uint32"
-                    }
-                ],
-                "indexed": false,
-                "internalType": "struct ITradingStorage.Id",
-                "name": "orderId",
-                "type": "tuple"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint8",
-                "name": "collateralIndex",
-                "type": "uint8"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "trader",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "pairIndex",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "index",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "marketPrice",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "collateralPriceUsd",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "collateralDelta",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "leverageDelta",
-                "type": "uint256"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "positionSizeCollateralDelta",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "existingPositionSizeCollateral",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "existingLiqPrice",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "priceAfterImpact",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "existingPnlCollateral",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "borrowingFeeCollateral",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "closingFeeCollateral",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "availableCollateralInDiamond",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "collateralSentToTrader",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "uint120",
-                        "name": "newCollateralAmount",
-                        "type": "uint120"
-                    },
-                    {
-                        "internalType": "uint24",
-                        "name": "newLeverage",
-                        "type": "uint24"
-                    }
-                ],
-                "indexed": false,
-                "internalType": "struct IUpdatePositionSize.DecreasePositionSizeValues",
-                "name": "values",
-                "type": "tuple"
-            }
-        ],
-        "name": "PositionSizeDecreaseExecuted",
         "type": "event"
     },
     {
