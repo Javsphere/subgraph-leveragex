@@ -1,6 +1,6 @@
 import { XVaultRequest } from "../../generated/schema";
 import { BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
-import { WEI_E18_BD } from "../common";
+import { WEI_E18_BD, XVaultType } from "../common";
 
 export function saveXVaultRequest(
     id: Bytes,
@@ -10,6 +10,7 @@ export function saveXVaultRequest(
     currEpoch: BigInt,
     unlockEpoch: BigInt,
     isWithdraw: boolean,
+    vaultType: XVaultType,
     block: BigInt,
     tx: Bytes,
     date: BigInt
@@ -22,6 +23,7 @@ export function saveXVaultRequest(
     xVaultRequest.currentEpoch = currEpoch;
     xVaultRequest.unlockEpoch = unlockEpoch;
     xVaultRequest.type = isWithdraw ? "WITHDRAW" : "CANCEL";
+    xVaultRequest.vaultType = vaultType == XVaultType.JAV ? "JAV" : "JAVLIS";
 
     xVaultRequest.block = block;
     xVaultRequest.tx = tx;

@@ -9,6 +9,11 @@ enum JLPActionType {
     SELL
 }
 
+enum XVaultType {
+    JAV
+    JAVLIS
+}
+
 enum XVaultActionType {
     DEPOSIT
     WITHDRAW
@@ -118,6 +123,7 @@ type XVaultHistory @entity {
     assetsAmount: BigDecimal!
     sharesAmount: BigDecimal!
     type: XVaultActionType!
+    vaultType: XVaultType!
     unlockEpoch: BigInt!
 
     block: BigInt!
@@ -133,6 +139,7 @@ type XVaultRequest @entity {
     currentEpoch: BigInt!
     unlockEpoch: BigInt!
     type: XVaultRequestType!
+    vaultType: XVaultType!
 
     block: BigInt!
     tx: Bytes!

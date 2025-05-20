@@ -22,6 +22,11 @@ export const WEI_E18_BD = BigDecimal.fromString("1e18");
 //DIVERSITY POINTS THRESHOLDS BY GROUP
 export const VOLUME_THRESHOLD = BigDecimal.fromString("100");
 
+export enum XVaultType {
+    JAV,
+    JAVLIS,
+}
+
 class Networks {
     BASE_SEPOLIA!: string;
     BASE!: string;
@@ -160,6 +165,7 @@ function getColDecimalsByNetwork(): BigDecimal[] {
             WEI_E18_BD, //1 (cbBTC)
             WEI_E18_BD, //2 (USDC)
             WEI_E18_BD, //3 (Jav)
+            WEI_E18_BD, //4 (Javlis)
         ];
     }
     if (constants.networkName == NETWORKS.BASE) {
@@ -168,6 +174,7 @@ function getColDecimalsByNetwork(): BigDecimal[] {
             WEI_E8_BD, //1 (cbBTC)
             WEI_E6_BD, //2 (USDC)
             WEI_E18_BD, //3 (Jav)
+            WEI_E18_BD, //4 (Javlis)
         ];
     } else {
         throw new Error("Unknown network");

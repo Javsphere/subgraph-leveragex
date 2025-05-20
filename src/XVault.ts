@@ -2,8 +2,9 @@ import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 import { saveXVaultHistory } from "./entity/xVaultHistory";
 import { saveXVaultRequest } from "./entity/xVaultRequests";
 import { Deposit, Withdraw, WithdrawCanceled, WithdrawRequested } from "../generated/XVault/XVault";
+import { XVaultType } from "./common";
 
-export function handleXVaultWithdrawRequest(event: WithdrawRequested): void {
+export function handleXVaultWithdrawRequest(event: WithdrawRequested, vaultType: XVaultType): void {
     const params = event.params;
 
     saveXVaultRequest(
@@ -14,13 +15,17 @@ export function handleXVaultWithdrawRequest(event: WithdrawRequested): void {
         params.currEpoch,
         params.unlockEpoch,
         true,
+        vaultType,
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
     );
 }
 
-export function handleXVaultCancelWithdrawRequest(event: WithdrawCanceled): void {
+export function handleXVaultCancelWithdrawRequest(
+    event: WithdrawCanceled,
+    vaultType: XVaultType
+): void {
     const params = event.params;
 
     saveXVaultRequest(
@@ -31,13 +36,14 @@ export function handleXVaultCancelWithdrawRequest(event: WithdrawCanceled): void
         params.currEpoch,
         params.unlockEpoch,
         false,
+        vaultType,
         event.block.number,
         event.transaction.hash,
         event.block.timestamp
     );
 }
 
-export function handleXVaultDeposit(event: Deposit): void {
+export function handleXVaultDeposit(event: Deposit, vaultType: XVaultType): void {
     const params = event.params;
 
     saveXVaultHistory(
@@ -47,6 +53,7 @@ export function handleXVaultDeposit(event: Deposit): void {
         new BigDecimal(params.assets),
         new BigDecimal(params.shares),
         true,
+        vaultType,
         BigInt.fromI32(0),
         event.block.number,
         event.transaction.hash,
@@ -54,7 +61,7 @@ export function handleXVaultDeposit(event: Deposit): void {
     );
 }
 
-export function handleXVaultWithdraw(event: Withdraw): void {
+export function handleXVaultWithdraw(event: Withdraw, vaultType: XVaultType): void {
     const params = event.params;
 
     saveXVaultHistory(
@@ -64,6 +71,7 @@ export function handleXVaultWithdraw(event: Withdraw): void {
         new BigDecimal(params.assets),
         new BigDecimal(params.shares),
         false,
+        vaultType,
         params.unlockEpoch,
         event.block.number,
         event.transaction.hash,

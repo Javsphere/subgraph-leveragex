@@ -11,6 +11,10 @@
         "XVault": {
             "address": "0x96aF2003ab259a56104d639eb6ed9EACe54B1142",
             "startBlock": 29564560
+        },
+        "JavlisXVault": {
+            "address": "0x791cEEf00dd2c2c3D5A9692863e6FD84e256E9D0",
+            "startBlock": 25983153
         }
     }
 }

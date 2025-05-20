@@ -112,7 +112,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/XVault.ts
+      file: ./src/Vaults.ts
       entities:
         - XVaultHistory
       abis:
@@ -120,13 +120,43 @@ dataSources:
           file: ./abis/XVault.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,uint256)
-          handler: handleXVaultDeposit
+          handler: handleJavVaultDeposit
         - event: Withdraw(indexed address,indexed address,indexed
             address,uint256,uint256,uint256)
-          handler: handleXVaultWithdraw
+          handler: handleJavVaultWithdraw
         - event: WithdrawRequested(indexed address,indexed address,uint256,uint256,indexed
             uint256)
-          handler: handleXVaultWithdrawRequest
+          handler: handleJavVaultWithdrawRequest
         - event: WithdrawCanceled(indexed address,indexed address,uint256,uint256,indexed
             uint256)
-          handler: handleXVaultCancelWithdrawRequest
+          handler: handleJavVaultCancelWithdrawRequest
+  - kind: ethereum/contract
+    name: JavlisXVault
+    network: base
+    source:
+      abi: XVault
+      address: "0x791cEEf00dd2c2c3D5A9692863e6FD84e256E9D0"
+      startBlock: 25983153
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/Vaults.ts
+      entities:
+        - XVaultHistory
+        - XVaultRequest
+      abis:
+        - name: XVault
+          file: ./abis/XVault.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,uint256,uint256)
+          handler: handleJavlisVaultDeposit
+        - event: Withdraw(indexed address,indexed address,indexed
+            address,uint256,uint256,uint256)
+          handler: handleJavlisVaultWithdraw
+        - event: WithdrawRequested(indexed address,indexed address,uint256,uint256,indexed
+            uint256)
+          handler: handleJavlisVaultWithdrawRequest
+        - event: WithdrawCanceled(indexed address,indexed address,uint256,uint256,indexed
+            uint256)
+          handler: handleJavlisVaultCancelWithdrawRequest
