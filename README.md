@@ -4,7 +4,7 @@
 
 #### Base
 
-v1.2.13
+v1.2.14
 
 #### Sepolia base
 
