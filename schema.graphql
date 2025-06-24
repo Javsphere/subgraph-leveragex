@@ -84,6 +84,9 @@ type OrdersHistory @entity {
     collateralPriceUsd: BigDecimal!
     price: BigDecimal!
     orderType: OrderType!
+    liqPrice: BigDecimal!
+    borrowingFee: BigDecimal!
+    closingFee: BigDecimal!
 
     block: BigInt!
     tx: Bytes!

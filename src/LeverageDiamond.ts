@@ -1,10 +1,13 @@
 import {
     BorrowingFeeCharged,
+    BorrowingFeeCharged1,
     BorrowingProviderFeeCharged,
     GovFeeCharged,
     LeverageUpdateExecuted,
     LimitExecuted,
+    LimitExecuted1,
     MarketExecuted,
+    MarketExecuted1,
     OpenLimitCanceled,
     OpenOrderPlaced,
     PositionSizeDecreaseExecuted,
@@ -18,7 +21,7 @@ import {
     TradeTpUpdated,
 } from "../generated/LeverageDiamond/LeverageDiamond";
 import { getTrade, saveTrade, updateTrade } from "./entity/trade";
-import { saveOrderHistory } from "./entity/ordersHistory";
+import { saveOrderHistory, saveOrderHistoryBorrowingFees } from "./entity/ordersHistory";
 import { BigDecimal, BigInt, log } from "@graphprotocol/graph-ts";
 import { savePairsStatistic } from "./entity/pairsStatistics";
 import { updateFeeBasedPoints } from "./entity/epochTradingPointsRecord";
@@ -70,6 +73,85 @@ export function handleMarketExecuted(event: MarketExecuted): void {
         params.open ? null : new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.price),
+        ZERO_BD,
+        ZERO_BD,
+        params.open ? 100 : 102,
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+    savePairsStatistic(
+        BigInt.fromI32(params.t.collateralIndex),
+        BigInt.fromI32(params.t.pairIndex),
+        params.t.long,
+        params.open
+    );
+
+    if (params.open) {
+        addOpenTradeStats({
+            collateralID: params.t.collateralIndex,
+            address: params.t.user.toHexString(),
+            pairIndex: params.t.pairIndex,
+            groupIndex: groupIndex.toI32(),
+            positionSize: volume,
+            leverage: leverage,
+            timestamp: event.block.timestamp,
+        });
+    } else {
+        const pnl = BigDecimal.fromString(params.amountSentToTrader.toString())
+            .div(TOKEN_DECIMALS[params.t.collateralIndex])
+            .minus(trade.collateralAmount);
+        addCloseTradeStats({
+            collateralID: params.t.collateralIndex,
+            address: params.t.user.toHexString(),
+            pairIndex: params.t.pairIndex,
+            groupIndex: groupIndex.toI32(),
+            positionSize: volume,
+            pnl: pnl,
+            tradedAmount: trade.collateralAmount,
+            timestamp: event.block.timestamp,
+        });
+    }
+}
+
+export function handleMarketExecuted1(event: MarketExecuted1): void {
+    const params = event.params;
+    const leverage = BigDecimal.fromString(params.t.leverage.toString()).div(WEI_E3_BD);
+    const amount = BigDecimal.fromString(params.t.collateralAmount.toString()).div(
+        TOKEN_DECIMALS[params.t.collateralIndex]
+    );
+    const volume = amount.times(leverage);
+    const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
+
+    const trade = saveTrade(
+        params.t.user,
+        params.t.index,
+        params.t.pairIndex,
+        BigDecimal.fromString(params.t.leverage.toString()),
+        params.t.long,
+        params.open,
+        params.t.collateralIndex,
+        params.t.tradeType,
+        BigDecimal.fromString(params.t.collateralAmount.toString()),
+        BigDecimal.fromString(params.t.openPrice.toString()),
+        BigDecimal.fromString(params.t.tp.toString()),
+        BigDecimal.fromString(params.t.sl.toString()),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+
+    saveOrderHistory(
+        trade,
+        params.open,
+        BigDecimal.fromString(params.t.leverage.toString()),
+        BigDecimal.fromString(params.t.collateralAmount.toString()),
+        new BigDecimal(params.priceImpactP),
+        params.open ? null : new BigDecimal(params.amountSentToTrader),
+        new BigDecimal(params.collateralPriceUsd),
+        new BigDecimal(params.price),
+        new BigDecimal(params.liqPrice),
+        new BigDecimal(params.closingFeeCollateralAmount),
         params.open ? 100 : 102,
         event.block.number,
         event.transaction.hash,
@@ -150,6 +232,90 @@ export function handleLimitExecuted(event: LimitExecuted): void {
         new BigDecimal(params.amountSentToTrader),
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.price),
+        ZERO_BD,
+        ZERO_BD,
+        orderType,
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+    savePairsStatistic(
+        BigInt.fromI32(params.t.collateralIndex),
+        BigInt.fromI32(params.t.pairIndex),
+        params.t.long,
+        isOpen
+    );
+
+    if (orderType == 0 || orderType == 2 || orderType == 3) {
+        addOpenTradeStats({
+            collateralID: params.t.collateralIndex,
+            address: params.t.user.toHexString(),
+            pairIndex: params.t.pairIndex,
+            groupIndex: groupIndex.toI32(),
+            positionSize: volume,
+            leverage: leverage,
+            timestamp: event.block.timestamp,
+        });
+    } else {
+        const pnl = BigDecimal.fromString(params.amountSentToTrader.toString())
+            .div(TOKEN_DECIMALS[params.t.collateralIndex])
+            .minus(trade.collateralAmount);
+        addCloseTradeStats({
+            collateralID: params.t.collateralIndex,
+            address: params.t.user.toHexString(),
+            pairIndex: params.t.pairIndex,
+            groupIndex: groupIndex.toI32(),
+            positionSize: volume,
+            pnl: pnl,
+            tradedAmount: trade.collateralAmount,
+            timestamp: event.block.timestamp,
+        });
+    }
+}
+
+export function handleLimitExecuted1(event: LimitExecuted1): void {
+    const params = event.params;
+    const leverage = BigDecimal.fromString(params.t.leverage.toString()).div(WEI_E3_BD);
+    const amount = BigDecimal.fromString(params.t.collateralAmount.toString()).div(
+        TOKEN_DECIMALS[params.t.collateralIndex]
+    );
+    const volume = amount.times(leverage);
+    const orderType = params.orderType;
+    const groupIndex = getGroupIndex(BigInt.fromI32(params.t.pairIndex));
+
+    const isOpen = params.percentProfit == new BigInt(0) && params.orderType != 6;
+
+    closeOpenOrder(params.orderId.user, params.orderId.index, event.transaction.hash);
+
+    const trade = saveTrade(
+        params.t.user,
+        params.t.index,
+        params.t.pairIndex,
+        BigDecimal.fromString(params.t.leverage.toString()),
+        params.t.long,
+        isOpen,
+        params.t.collateralIndex,
+        params.t.tradeType,
+        BigDecimal.fromString(params.t.collateralAmount.toString()),
+        BigDecimal.fromString(params.t.openPrice.toString()),
+        BigDecimal.fromString(params.t.tp.toString()),
+        BigDecimal.fromString(params.t.sl.toString()),
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
+    );
+
+    saveOrderHistory(
+        trade,
+        isOpen,
+        BigDecimal.fromString(params.t.leverage.toString()),
+        BigDecimal.fromString(params.t.collateralAmount.toString()),
+        new BigDecimal(params.priceImpactP),
+        new BigDecimal(params.amountSentToTrader),
+        new BigDecimal(params.collateralPriceUsd),
+        new BigDecimal(params.price),
+        new BigDecimal(params.liqPrice),
+        new BigDecimal(params.closingFeeCollateralAmount),
         orderType,
         event.block.number,
         event.transaction.hash,
@@ -228,6 +394,8 @@ export function handleLeverageUpdateExecuted(event: LeverageUpdateExecuted): voi
         null,
         ZERO_BD,
         new BigDecimal(params.marketPrice),
+        ZERO_BD,
+        ZERO_BD,
         7, // UPDATE_LEVERAGE
         event.block.number,
         event.transaction.hash,
@@ -266,6 +434,8 @@ export function handlePositionSizeIncreaseExecuted(event: PositionSizeIncreaseEx
         null,
         ZERO_BD,
         new BigDecimal(params.marketPrice),
+        ZERO_BD,
+        ZERO_BD,
         103, // UPDATE_POSITION_SIZE
         event.block.number,
         event.transaction.hash,
@@ -304,6 +474,8 @@ export function handlePositionSizeIncreaseExecuted1(event: PositionSizeIncreaseE
         null,
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.marketPrice),
+        ZERO_BD,
+        ZERO_BD,
         103, // UPDATE_POSITION_SIZE
         event.block.number,
         event.transaction.hash,
@@ -341,6 +513,8 @@ export function handlePositionSizeDecreaseExecuted(event: PositionSizeDecreaseEx
         null,
         ZERO_BD,
         new BigDecimal(params.marketPrice),
+        ZERO_BD,
+        ZERO_BD,
         103, // UPDATE_POSITION_SIZE
         event.block.number,
         event.transaction.hash,
@@ -378,6 +552,8 @@ export function handlePositionSizeDecreaseExecuted1(event: PositionSizeDecreaseE
         null,
         new BigDecimal(params.collateralPriceUsd),
         new BigDecimal(params.marketPrice),
+        ZERO_BD,
+        ZERO_BD,
         103, // UPDATE_POSITION_SIZE
         event.block.number,
         event.transaction.hash,
@@ -415,6 +591,8 @@ export function handleTradeSlUpdated(event: TradeSlUpdated): void {
         null,
         ZERO_BD,
         ZERO_BD,
+        ZERO_BD,
+        ZERO_BD,
         104, // UPDATE_SL
         event.block.number,
         event.transaction.hash,
@@ -449,6 +627,8 @@ export function handleTradeTpUpdated(event: TradeTpUpdated): void {
         trade.collateralAmount.times(TOKEN_DECIMALS[trade.collateralIndex]),
         ZERO_BD,
         null,
+        ZERO_BD,
+        ZERO_BD,
         ZERO_BD,
         ZERO_BD,
         105, // UPDATE_TP
@@ -508,6 +688,29 @@ export function handleBorrowingFeeCharged(event: BorrowingFeeCharged): void {
     const params = event.params;
     const borrowingFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
         TOKEN_DECIMALS[params.collateralIndex]
+    );
+
+    addBorrowingFeeStats(
+        params.trader.toHexString(),
+        borrowingFee,
+        event.block.timestamp,
+        params.collateralIndex
+    );
+}
+
+export function handleBorrowingFeeCharged1(event: BorrowingFeeCharged1): void {
+    const params = event.params;
+    const borrowingFee = BigDecimal.fromString(params.amountCollateral.toString()).div(
+        TOKEN_DECIMALS[params.collateralIndex]
+    );
+
+    saveOrderHistoryBorrowingFees(
+        params.trader,
+        params.index,
+        borrowingFee,
+        event.block.number,
+        event.transaction.hash,
+        event.block.timestamp
     );
 
     addBorrowingFeeStats(

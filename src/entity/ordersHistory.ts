@@ -1,6 +1,14 @@
 import { OrdersHistory, Trade } from "../../generated/schema";
-import { BigDecimal, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
-import { TOKEN_DECIMALS, WEI_E10_BD, WEI_E2_BD, WEI_E3_BD, WEI_E8_BD, ZERO_BD } from "../common";
+import { BigDecimal, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts";
+import {
+    TOKEN_DECIMALS,
+    WEI_E10_BD,
+    WEI_E2_BD,
+    WEI_E3_BD,
+    WEI_E8_BD,
+    ZERO_BD,
+    ZERO_BI,
+} from "../common";
 
 export function saveOrderHistory(
     trade: Trade,
@@ -11,6 +19,8 @@ export function saveOrderHistory(
     amountSentToTrader: BigDecimal | null,
     collateralPriceUsd: BigDecimal,
     price: BigDecimal,
+    liqPrice: BigDecimal,
+    closingFeeCollateralAmount: BigDecimal,
     orderType: i32,
     block: BigInt,
     tx: Bytes,
@@ -21,6 +31,7 @@ export function saveOrderHistory(
     if (!orderHistory) {
         orderHistory = new OrdersHistory(orderHistoryID);
         orderHistory.trade = trade.id;
+        orderHistory.borrowingFee = ZERO_BD;
     }
     if (amountSentToTrader) {
         amountSentToTrader = amountSentToTrader.div(TOKEN_DECIMALS[trade.collateralIndex]);
@@ -42,6 +53,46 @@ export function saveOrderHistory(
     orderHistory.price = price.div(WEI_E10_BD);
     orderHistory.orderType = getOrderTypeByKey(orderType);
     orderHistory.open = open;
+    orderHistory.liqPrice = liqPrice.div(WEI_E10_BD);
+    orderHistory.closingFee = closingFeeCollateralAmount.div(TOKEN_DECIMALS[trade.collateralIndex]);
+
+    orderHistory.block = block;
+    orderHistory.tx = tx;
+    orderHistory.date = date;
+
+    orderHistory.save();
+}
+
+export function saveOrderHistoryBorrowingFees(
+    user: Address,
+    index: BigInt,
+    collateralAmount: BigDecimal,
+    block: BigInt,
+    tx: Bytes,
+    date: BigInt
+): void {
+    const orderHistoryID = `${user.toHexString()}-${index}-${date}`;
+    let orderHistory = OrdersHistory.load(orderHistoryID);
+    if (!orderHistory) {
+        orderHistory = new OrdersHistory(orderHistoryID);
+        orderHistory.trade = `${user.toHexString()}-${index}`;
+        orderHistory.borrowingFee = ZERO_BD;
+        orderHistory.pnl = ZERO_BD;
+        orderHistory.pnlPercentage = ZERO_BD;
+        orderHistory.amountSentToTrader = ZERO_BD;
+        orderHistory.leverage = ZERO_BD;
+        orderHistory.collateralAmount = ZERO_BD;
+        orderHistory.priceImpactP = ZERO_BD;
+        orderHistory.collateralPriceUsd = ZERO_BD;
+        orderHistory.price = ZERO_BD;
+        orderHistory.orderType = ZERO_BI.toString();
+        orderHistory.open = false;
+        orderHistory.liqPrice = ZERO_BD;
+        orderHistory.closingFee = ZERO_BD;
+    }
+
+    orderHistory.borrowingFee = orderHistory.borrowingFee.plus(collateralAmount);
+
     orderHistory.block = block;
     orderHistory.tx = tx;
     orderHistory.date = date;

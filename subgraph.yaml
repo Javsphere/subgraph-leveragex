@@ -5,11 +5,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: LeverageDiamond
-    network: base
+    network: base-sepolia
     source:
       abi: LeverageDiamond
-      address: "0xBF35e4273db5692777EA475728fDbBa092FFa1B3"
-      startBlock: 22354208
+      address: "0xDED8c59c45D8e0f45D8C32f6F6E0A4a2d582e59d"
+      startBlock: 18130356
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -27,9 +27,14 @@ dataSources:
       eventHandlers:
         - event: MarketExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256)
           handler: handleMarketExecuted
+        - event: MarketExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),bool,uint64,uint256,int256,uint256,uint256,uint64,uint256)
+          handler: handleMarketExecuted1
         - event: LimitExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
             address,uint8,uint256,uint256,int256,uint256,uint256,bool)
           handler: handleLimitExecuted
+        - event: LimitExecuted((address,uint32),(address,uint32,uint16,uint24,bool,bool,uint8,uint8,uint120,uint64,uint64,uint64,uint192),indexed
+            address,uint8,uint256,uint256,int256,uint256,uint256,bool,uint256,uint256)
+          handler: handleLimitExecuted1
         - event: OpenLimitCanceled(indexed address,indexed uint16,uint32)
           handler: handleOpenLimitCanceled
         - event: TradePositionUpdated((address,uint32),uint120,uint24,uint64,uint64,uint64,bool)
@@ -68,15 +73,17 @@ dataSources:
           handler: handleBorrowingProviderFeeCharged
         - event: BorrowingFeeCharged(indexed address,indexed uint8,uint256)
           handler: handleBorrowingFeeCharged
+        - event: BorrowingFeeCharged(indexed address,indexed uint8,uint256,uint32)
+          handler: handleBorrowingFeeCharged1
         - event: OpenOrderPlaced(indexed address,indexed uint16,uint32)
           handler: handleOpenOrderPlaced
   - kind: ethereum/contract
     name: JavBorrowingProvider
-    network: base
+    network: base-sepolia
     source:
       abi: JavBorrowingProvider
-      address: "0xFd916d70eB2d0E0E1C17A6a68a7FBEdE3106b852"
-      startBlock: 22354208
+      address: "0x0CB952f45b5bDE5aA0e93862707bf34F2EE1E452"
+      startBlock: 18207646
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -102,11 +109,11 @@ dataSources:
           handler: handleRewardDistributed
   - kind: ethereum/contract
     name: XVault
-    network: base
+    network: base-sepolia
     source:
       abi: XVault
-      address: "0x96aF2003ab259a56104d639eb6ed9EACe54B1142"
-      startBlock: 29564560
+      address: "0x83f4318cA5345B997f041EFC8022bC2AE98E3D29"
+      startBlock: 23615141
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -131,11 +138,11 @@ dataSources:
           handler: handleJavVaultCancelWithdrawRequest
   - kind: ethereum/contract
     name: JavlisXVault
-    network: base
+    network: base-sepolia
     source:
       abi: XVault
-      address: "0xdfc8c41816Cd6CCa9739f946e73b4eeB17195836"
-      startBlock: 31163416
+      address: "0x791cEEf00dd2c2c3D5A9692863e6FD84e256E9D0"
+      startBlock: 25983153
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

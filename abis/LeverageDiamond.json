@@ -9013,6 +9013,37 @@
                 "internalType": "uint256",
                 "name": "amountCollateral",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32",
+                "name": "index",
+                "type": "uint32"
+            }
+        ],
+        "name": "BorrowingFeeCharged",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "trader",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint8",
+                "name": "collateralIndex",
+                "type": "uint8"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amountCollateral",
+                "type": "uint256"
             }
         ],
         "name": "BorrowingProviderFeeCharged",
@@ -9388,6 +9419,164 @@
                 "type": "tuple"
             },
             {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "index",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint16",
+                        "name": "pairIndex",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "uint24",
+                        "name": "leverage",
+                        "type": "uint24"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "long",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isOpen",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "collateralIndex",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "enum ITradingStorage.TradeType",
+                        "name": "tradeType",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint120",
+                        "name": "collateralAmount",
+                        "type": "uint120"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "openPrice",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "tp",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "sl",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint192",
+                        "name": "__placeholder",
+                        "type": "uint192"
+                    }
+                ],
+                "indexed": false,
+                "internalType": "struct ITradingStorage.Trade",
+                "name": "t",
+                "type": "tuple"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "triggerCaller",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "enum ITradingStorage.PendingOrderType",
+                "name": "orderType",
+                "type": "uint8"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "priceImpactP",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "int256",
+                "name": "percentProfit",
+                "type": "int256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amountSentToTrader",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "collateralPriceUsd",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "exactExecution",
+                "type": "bool"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "liqPrice",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "closingFeeCollateralAmount",
+                "type": "uint256"
+            }
+        ],
+        "name": "LimitExecuted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "index",
+                        "type": "uint32"
+                    }
+                ],
+                "indexed": false,
+                "internalType": "struct ITradingStorage.Id",
+                "name": "orderId",
+                "type": "tuple"
+            },
+            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "trader",
@@ -9543,6 +9732,152 @@
                 "indexed": false,
                 "internalType": "uint256",
                 "name": "collateralPriceUsd",
+                "type": "uint256"
+            }
+        ],
+        "name": "MarketExecuted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "index",
+                        "type": "uint32"
+                    }
+                ],
+                "indexed": false,
+                "internalType": "struct ITradingStorage.Id",
+                "name": "orderId",
+                "type": "tuple"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "index",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint16",
+                        "name": "pairIndex",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "uint24",
+                        "name": "leverage",
+                        "type": "uint24"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "long",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isOpen",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "collateralIndex",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "enum ITradingStorage.TradeType",
+                        "name": "tradeType",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint120",
+                        "name": "collateralAmount",
+                        "type": "uint120"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "openPrice",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "tp",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "sl",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint192",
+                        "name": "__placeholder",
+                        "type": "uint192"
+                    }
+                ],
+                "indexed": false,
+                "internalType": "struct ITradingStorage.Trade",
+                "name": "t",
+                "type": "tuple"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "open",
+                "type": "bool"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint64",
+                "name": "price",
+                "type": "uint64"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "priceImpactP",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "int256",
+                "name": "percentProfit",
+                "type": "int256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amountSentToTrader",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "collateralPriceUsd",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint64",
+                "name": "liqPrice",
+                "type": "uint64"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "closingFeeCollateralAmount",
                 "type": "uint256"
             }
         ],
